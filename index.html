@@ -1268,10 +1268,6 @@
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
                         <span>Edit My Profile</span>
                      </button>
-                    <button id="my-wallet-btn" class="text-icon-btn">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path></svg>
-                        <span>My Wallet</span>
-                    </button>
                 </div>
 
                 <div id="profile-edit-form" style="display:none;">
@@ -1309,8 +1305,13 @@
                         </div>
                     </div>
                 </div>
-
                  <div class="settings-section">
+                    <div id="my-wallet-item" class="settings-item">
+                        <div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path></svg></div>
+                        <div class="details">
+                            <div class="title">My Wallet</div>
+                        </div>
+                    </div>
                     <div id="referral-program-item" class="settings-item">
                         <div class="icon"><svg viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.5-1.12 2.5-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.41C10.5 13.1 9.66 13 9 13z"/></svg></div>
                         <div class="details">
@@ -1318,7 +1319,6 @@
                             <div class="subtitle">Total Referrals: <span id="total-referrals-count">0</span></div>
                         </div>
                     </div>
-                    <!-- NEW: Add Friend moved here -->
                     <div id="add-friend-item" class="settings-item">
                         <div class="icon"><svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg></div>
                         <div class="details">
@@ -1341,6 +1341,12 @@
                         <div class="details">
                             <div class="title">Change Gender</div>
                             <div class="subtitle">Can only be changed once</div>
+                        </div>
+                    </div>
+                    <div id="copy-profile-url-item" class="settings-item">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg></div>
+                        <div class="details">
+                            <div class="title">Copy Profile URL</div>
                         </div>
                     </div>
                 </div>
@@ -1463,7 +1469,6 @@
             <main id="chat-messages" style="background-color: var(--wa-chat-bg);"></main>
 
             <footer id="chat-input-container">
-                <!-- UPDATED: Added image upload button -->
                 <input type="file" id="chat-image-input" accept="image/*" style="display: none;">
                 <button id="chat-attach-btn" class="icon-btn" style="color: var(--wa-text-secondary); background-color: white; border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0;">
                     <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"></path></svg>
@@ -1491,6 +1496,10 @@
             <main id="dm-chat-messages" style="background-color: var(--wa-chat-bg);"></main>
 
             <footer id="dm-chat-input-container">
+                 <input type="file" id="dm-image-input" accept="image/*" style="display: none;">
+                 <button id="dm-attach-btn" class="icon-btn" style="color: var(--wa-text-secondary); background-color: white; border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"></path></svg>
+                </button>
                 <textarea id="dm-chat-input" placeholder="Message" rows="1"></textarea>
                 <button id="dm-chat-send-btn">
                      <svg viewBox="0 0 24 24" fill="white" width="24px" height="24px"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
@@ -1582,7 +1591,6 @@
         <div id="qr-code-modal" class="modal"> <div class="modal-content"> <h2>Scan this Code</h2> <div id="qr-code-display"></div> <p style="text-align:center; font-size:16px; font-weight:500;" id="qr-code-text"></p> <button id="close-qr-modal-btn" class="secondary">Close</button> </div> </div>
         <div id="exit-confirm-modal" class="modal"> <div class="modal-content"> <h2>Exit App?</h2> <p style="text-align:center;">Are you sure you want to exit?</p> <div class="modal-actions" style="justify-content:space-around;"> <button id="exit-no-btn" class="secondary">No</button> <button id="exit-yes-btn">Yes</button> </div> </div> </div>
         
-        <!-- UPDATED: Boost Post Modal -->
         <div id="boost-post-modal" class="modal">
             <div class="modal-content">
                 <h2>Boost Post</h2>
@@ -1647,7 +1655,6 @@
             </div>
         </div>
 
-        <!-- NEW: Change Password Modal -->
         <div id="change-password-modal" class="modal">
             <div class="modal-content">
                 <h2>Change Password</h2>
@@ -1663,7 +1670,6 @@
             </div>
         </div>
         
-        <!-- NEW: Referral Modal -->
         <div id="referral-modal" class="modal">
             <div class="modal-content">
                 <h2>Referral Program</h2>
@@ -1684,7 +1690,6 @@
             </div>
         </div>
         
-        <!-- NEW: Withdraw Modal -->
         <div id="withdraw-modal" class="modal">
             <div class="modal-content">
                 <h2>Withdraw Money</h2>
@@ -1704,6 +1709,20 @@
                 <div class="modal-actions">
                     <button id="close-withdraw-modal-btn" class="secondary">Cancel</button>
                     <button id="submit-withdraw-request-btn">Submit Request</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NEW: Image Preview and Send Modal -->
+        <div id="image-preview-send-modal" class="modal">
+            <div class="modal-content">
+                <h2>Send Image</h2>
+                <div id="image-preview-send-display" style="text-align: center;">
+                    <img id="image-preview-send-src" src="" alt="Image Preview" style="max-width: 100%; max-height: 50vh; border-radius: 8px;">
+                </div>
+                <div class="modal-actions">
+                    <button id="cancel-send-image-btn" class="secondary">Cancel</button>
+                    <button id="confirm-send-image-btn">Send</button>
                 </div>
             </div>
         </div>
@@ -1731,6 +1750,7 @@
         let currentUser = null, currentChannel = null, currentDmPartner = null;
         let totalNotifications = 0, currentView = 'loading-view', html5QrCode = null, scannerMode = null;
         let postImageFile = null; 
+        let chatImageFile = null; // For image preview
         let badgePackagesConfig = null;
         let appInitialized = false;
         let boostCostPerDay = 1.00; 
@@ -1897,10 +1917,22 @@
                         if (!appInitialized) {
                             initializeApp(); 
                             appInitialized = true;
+                        } else {
+                            // Check for referral bonus on subsequent logins after verification
+                            handleReferralBonusOnLogin();
                         }
                         
                         if (currentView === 'loading-view' || currentView === 'auth-view' || currentView === 'verify-email-view') {
-                             showView('main-view', false); 
+                            const urlHash = window.location.hash;
+                            if (urlHash.includes('#user-profile-view?id=')) {
+                                const userId = urlHash.split('?id=')[1];
+                                if (userId) {
+                                    showView('user-profile-view');
+                                    openUserProfileView(userId);
+                                }
+                            } else {
+                                showView('main-view', false); 
+                            }
                         }
                     } else { 
                         auth.signOut(); 
@@ -1994,14 +2026,20 @@
                     wallet: { main: 0, refer: 0, coupon: 0 },
                     badgeInfo: { packageType: 'free', expiryTimestamp: 0 },
                     dobChanged: false,
-                    genderChanged: false
+                    genderChanged: false,
+                    referralBonusCredited: false
                 };
-                await db.ref(`users/${user.uid}`).set(profileData);
 
                 if (referCode) {
-                    await handleReferral(referCode, user.uid, name);
+                    const usersRef = db.ref('users');
+                    const snapshot = await usersRef.orderByChild('jgId').equalTo(referCode).limitToFirst(1).once('value');
+                    if (snapshot.exists()) {
+                        const referrerUid = Object.keys(snapshot.val())[0];
+                        profileData.referredBy = referrerUid;
+                    }
                 }
 
+                await db.ref(`users/${user.uid}`).set(profileData);
                 showView('verify-email-view');
 
             } catch (err) {
@@ -2033,21 +2071,35 @@
                 });
         });
         
-        async function handleReferral(refCode, newUserId, newUserName) {
-            const usersRef = db.ref('users');
-            const snapshot = await usersRef.orderByChild('jgId').equalTo(refCode).limitToFirst(1).once('value');
-            if (snapshot.exists()) {
-                const referrerUid = Object.keys(snapshot.val())[0];
+        async function handleReferralBonusOnLogin() {
+            if (currentUser && currentUser.referredBy && !currentUser.referralBonusCredited) {
+                const newUserId = currentUser.uid;
+                const referrerUid = currentUser.referredBy;
+                const newUserName = currentUser.name;
+
+                const referrerSnap = await db.ref(`users/${referrerUid}`).once('value');
+                if (!referrerSnap.exists()) {
+                    // Referrer account might have been deleted, so just mark as credited to avoid re-checking.
+                    await db.ref(`users/${newUserId}/referralBonusCredited`).set(true);
+                    return;
+                }
+
                 const referralBonus = 0.20;
                 const updates = {};
                 updates[`/users/${newUserId}/wallet/main`] = firebase.database.ServerValue.increment(referralBonus);
-                updates[`/users/${newUserId}/referredBy`] = referrerUid;
                 updates[`/users/${referrerUid}/wallet/refer`] = firebase.database.ServerValue.increment(referralBonus);
+                
                 const newUserTxKey = db.ref(`transactionHistory/${newUserId}`).push().key;
                 updates[`/transactionHistory/${newUserId}/${newUserTxKey}`] = { amount: referralBonus, reason: "Sign-up bonus from referral", timestamp: firebase.database.ServerValue.TIMESTAMP };
+                
                 const referrerTxKey = db.ref(`transactionHistory/${referrerUid}`).push().key;
                 updates[`/transactionHistory/${referrerUid}/${referrerTxKey}`] = { amount: referralBonus, reason: `Referral bonus from ${newUserName}`, timestamp: firebase.database.ServerValue.TIMESTAMP };
+                
+                // Mark as credited to prevent double payout
+                updates[`/users/${newUserId}/referralBonusCredited`] = true;
+
                 await db.ref().update(updates);
+                
                 createNotification(newUserId, 'welcome_bonus', `আপনি সাইনআপ করার জন্য $${referralBonus.toFixed(2)} ফ্রী পেয়েছেন।`, null);
                 createNotification(referrerUid, 'referral_bonus', `${newUserName} joined using your referral. You earned $${referralBonus.toFixed(2)}!`, null);
             }
@@ -2059,6 +2111,7 @@
 
         function initializeApp() {
             loadBadgePackageConfig();
+            handleReferralBonusOnLogin();
             listenForFriendRequests();
             listenAndRenderChannels();
             listenAndRenderPosts();
@@ -2081,7 +2134,7 @@
         document.getElementById('nav-dm-btn').addEventListener('click', () => showView('dm-view'));
         document.getElementById('notification-btn').addEventListener('click', () => showView('notifications-view'));
         document.getElementById('request-badge-btn').addEventListener('click', () => showView('badge-request-view'));
-        document.getElementById('my-wallet-btn').addEventListener('click', () => showView('wallet-view'));
+        document.getElementById('my-wallet-item').addEventListener('click', () => showView('wallet-view'));
         document.getElementById('boost-dashboard-btn').addEventListener('click', () => showView('boost-dashboard-view'));
         document.getElementById('close-add-friend-modal-btn').addEventListener('click', () => showModal('add-friend-modal', false));
         document.getElementById('show-create-channel-modal-btn').addEventListener('click', () => showModal('create-channel-modal'));
@@ -2326,7 +2379,7 @@
                 reactionsDisplay += '</div>';
             }
             
-            div.innerHTML = `${senderNameHTML}<div class="message-content-wrapper" onclick="this.querySelector('.reaction-bar').style.display='block'">${contentHTML}</div> ${reactionBar} ${reactionsDisplay} ${menuHTML}`; 
+            div.innerHTML = `${senderNameHTML}<div class="message-content-wrapper" onclick="event.stopPropagation(); this.querySelector('.reaction-bar').style.display='block'">${contentHTML}</div> ${reactionBar} ${reactionsDisplay} ${menuHTML}`; 
             
             if(!isUpdate) {
                 container.appendChild(div); 
@@ -2335,18 +2388,24 @@
             container.scrollTop = container.scrollHeight; 
         }
 
-        document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
-        document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } const textarea = e.target; textarea.style.height = 'auto'; textarea.style.height = (textarea.scrollHeight) + 'px'; });
+        document.getElementById('chat-send-btn').addEventListener('click', sendChannelMessage);
+        document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChannelMessage(); } const textarea = e.target; textarea.style.height = 'auto'; textarea.style.height = (textarea.scrollHeight) + 'px'; });
         
-        function sendMessage() { 
-            const input = document.getElementById('chat-input'); const text = input.value.trim(); if (!text || !currentChannel) return; 
+        function sendChannelMessage(textOverride = null) { 
+            const input = document.getElementById('chat-input'); const text = textOverride || input.value.trim(); if (!text || !currentChannel) return; 
             const messageData = { type: 'text', text: text, sender: currentUser.uid, senderName: currentUser.name, timestamp: firebase.database.ServerValue.TIMESTAMP }; 
-            db.ref(`channel_messages/${currentChannel.id}`).push(messageData); input.value = ''; input.style.height = 'auto'; 
+            db.ref(`channel_messages/${currentChannel.id}`).push(messageData); if(!textOverride) { input.value = ''; input.style.height = 'auto'; }
         }
-
+        
         document.getElementById('chat-attach-btn').addEventListener('click', () => { document.getElementById('chat-image-input').click(); });
-        document.getElementById('chat-image-input').addEventListener('change', async (e) => { const file = e.target.files[0]; if (!file || !currentChannel) return; const imageUrl = await uploadImage(file); if (imageUrl) { const messageData = { type: 'image', imageUrl: imageUrl, sender: currentUser.uid, senderName: currentUser.name, timestamp: firebase.database.ServerValue.TIMESTAMP }; db.ref(`channel_messages/${currentChannel.id}`).push(messageData); } e.target.value = ''; });
+        document.getElementById('chat-image-input').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file || !currentChannel) return; chatImageFile = file; const reader = new FileReader(); reader.onload = (event) => { document.getElementById('image-preview-send-src').src = event.target.result; showModal('image-preview-send-modal'); }; reader.readAsDataURL(file); e.target.value = ''; });
+        
+        document.getElementById('dm-attach-btn').addEventListener('click', () => { document.getElementById('dm-image-input').click(); });
+        document.getElementById('dm-image-input').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file || !currentDmPartner) return; chatImageFile = file; const reader = new FileReader(); reader.onload = (event) => { document.getElementById('image-preview-send-src').src = event.target.result; showModal('image-preview-send-modal'); }; reader.readAsDataURL(file); e.target.value = ''; });
 
+        document.getElementById('cancel-send-image-btn').addEventListener('click', () => { chatImageFile = null; showModal('image-preview-send-modal', false); });
+        document.getElementById('confirm-send-image-btn').addEventListener('click', async () => { if (!chatImageFile) return; const imageUrl = await uploadImage(chatImageFile); if (imageUrl) { if (currentView === 'chat-view' && currentChannel) { const messageData = { type: 'image', imageUrl: imageUrl, sender: currentUser.uid, senderName: currentUser.name, timestamp: firebase.database.ServerValue.TIMESTAMP }; db.ref(`channel_messages/${currentChannel.id}`).push(messageData); } else if (currentView === 'dm-chat-view' && currentDmPartner) { sendDmMessage(null, imageUrl); } } chatImageFile = null; showModal('image-preview-send-modal', false); });
+        
         window.handleChannelMessageReaction = (channelId, msgId, reactionType) => { const reactionRef = db.ref(`channel_messages/${channelId}/${msgId}/reactions/${reactionType}/${currentUser.uid}`); reactionRef.once('value', snapshot => { if (snapshot.exists()) { reactionRef.remove(); } else { reactionRef.set(true); } }); };
         window.deleteChannelMessage = (channelId, msgId) => { if(confirm('Delete this message?')) db.ref(`channel_messages/${channelId}/${msgId}`).remove(); };
         window.startEditChannelMessage = (msgId, currentText) => { const msgDiv = document.getElementById(`msg-${msgId}`).querySelector('.message-content-wrapper'); msgDiv.innerHTML = `<textarea id="edit-msg-${msgId}" style="width:100%;">${currentText}</textarea><button onclick="saveEditChannelMessage('${currentChannel.id}', '${msgId}')">Save</button>`; };
@@ -2561,9 +2620,10 @@
 
             const userSnap = await db.ref(`users/${postData.authorUid}`).once('value');
             let authorHasBadge = false;
+            let authorData = null;
             if (userSnap.exists()) {
-                const userData = userSnap.val();
-                authorHasBadge = userData.badgeInfo && userData.badgeInfo.expiryTimestamp && userData.badgeInfo.expiryTimestamp > Date.now();
+                authorData = userSnap.val();
+                authorHasBadge = authorData.badgeInfo && authorData.badgeInfo.expiryTimestamp && authorData.badgeInfo.expiryTimestamp > Date.now();
             }
             
             const postContainer = document.createElement('div');
@@ -2575,8 +2635,16 @@
             const time = new Date(postData.timestamp).toLocaleString();
             
             const isMyPost = postData.authorUid === currentUser.uid;
-            let actionButtonHtml = isMyPost ? `<button class="post-action-btn" onclick="openBoostModal('${postId}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"></path></svg><span>Boost Now</span></button>` : '';
             
+            // Generate action buttons HTML
+            let actionButtons = `<button class="post-action-btn" id="like-btn-${postId}" onclick="handleReaction('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg><span id="like-text-${postId}">Like</span><span id="like-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
+            actionButtons += `<button class="post-action-btn" onclick="toggleComments('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path></svg><span>Comment</span><span id="comment-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
+            if (!isMyPost) {
+                actionButtons += `<button class="post-action-btn" onclick="initiateDmFromPost('${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg><span>Message</span></button>`;
+            } else {
+                 actionButtons += `<button class="post-action-btn" onclick="openBoostModal('${postId}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"></path></svg><span>Boost Now</span></button>`;
+            }
+
             const isBoosted = postData.boostInfo && postData.boostInfo.status === 'active' && postData.boostInfo.endDate > Date.now();
             const sponsoredLabelHtml = isBoosted ? `<div class="sponsored-label">Sponsored</div>` : '';
             
@@ -2591,11 +2659,10 @@
             if (postData.text) { postContentHtml += `<div class="post-text-content" style="${postData.imageUrl ? 'margin-top:10px;' : ''}">${linkify(escapeHTML(postData.text))}</div>`; }
             postContentHtml += boostButtonHtml; 
 
-
             const postMenuId = `post-menu-${postId}`;
             const postMenu = `<div style="position: relative;"><button class="icon-btn post-menu-btn" onclick="togglePostMenu(event, '${postMenuId}')"><svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button><div id="${postMenuId}" class="post-dropdown-menu">${isMyPost ? `<button onclick="openEditModal('${postId}')">Edit Post</button>` : ''}${postData.imageUrl ? `<button onclick="savePostImage('${postData.imageUrl}')">Save Image</button>` : ''}<button onclick="copyPostId('${postId}')">Copy This Post ID</button><button onclick="sharePost(\`${encodeURIComponent(postData.text || '')}\`, \`${encodeURIComponent(postData.imageUrl || '')}\`)">Share</button>${isMyPost ? `<button style="color: #d93025;" onclick="deletePost('${postId}')">Delete Post</button>` : `<button onclick="reportPost('${postId}', '${postData.authorUid}')">Report</button>`}</div></div>`;
             
-            postCard.innerHTML = `<div class="post-header"><img src="${postData.authorProfileImageUrl}" alt="${postData.authorName}" class="post-author-img" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')"><div class="post-author-info"><div class="name" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')">${escapeHTML(postData.authorName)} ${getBlueBadgeIcon(authorHasBadge)}</div>${sponsoredLabelHtml}<div class="timestamp">${time}</div></div>${postMenu}</div><div class="post-content">${postContentHtml}</div><div class="post-actions"><button class="post-action-btn" id="like-btn-${postId}" onclick="handleReaction('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg><span id="like-text-${postId}">Like</span><span id="like-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button><button class="post-action-btn" onclick="toggleComments('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path></svg><span>Comment</span><span id="comment-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>${actionButtonHtml}</div>`;
+            postCard.innerHTML = `<div class="post-header"><img src="${postData.authorProfileImageUrl}" alt="${postData.authorName}" class="post-author-img" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')"><div class="post-author-info"><div class="name" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')">${escapeHTML(postData.authorName)} ${getBlueBadgeIcon(authorHasBadge)}</div>${sponsoredLabelHtml}<div class="timestamp">${time}</div></div>${postMenu}</div><div class="post-content">${postContentHtml}</div><div class="post-actions">${actionButtons}</div>`;
             const commentsSection = document.createElement('div');
             commentsSection.className = 'post-comments-section';
             commentsSection.id = `comments-for-${postId}`;
@@ -2633,6 +2700,14 @@
             });
         }
         
+        async function initiateDmFromPost(authorUid) {
+            const userSnap = await db.ref(`users/${authorUid}`).once('value');
+            if(userSnap.exists()){
+                const userData = userSnap.val();
+                openDmChat(authorUid, userData);
+            }
+        }
+
         window.togglePostMenu = (event, menuId) => { event.stopPropagation(); const menu = document.getElementById(menuId); const isVisible = menu.style.display === 'block'; document.querySelectorAll('.post-dropdown-menu').forEach(m => m.style.display = 'none'); if (menu) menu.style.display = isVisible ? 'none' : 'block'; };
         window.viewPostImage = (imageUrl) => { document.getElementById('post-image-view-src').src = imageUrl; showModal('post-image-view-modal'); };
         window.copyPostId = (postId) => { navigator.clipboard.writeText(postId).then(() => alert('Post ID copied!'), () => alert('Failed to copy Post ID.')); };
@@ -3229,6 +3304,12 @@
                     alert("Invalid gender. Please enter 'male', 'female', or 'other'.")
                 }
             });
+            document.getElementById('copy-profile-url-item').addEventListener('click', () => {
+                 const profileUrl = `${window.location.origin}${window.location.pathname}#user-profile-view?id=${currentUser.uid}`;
+                 navigator.clipboard.writeText(profileUrl)
+                    .then(() => alert('Profile URL copied to clipboard!'))
+                    .catch(() => alert('Failed to copy URL.'));
+            });
             
             document.getElementById('referral-program-item').addEventListener('click', () => {
                  document.getElementById('referral-code-input').value = currentUser.jgId;
@@ -3318,30 +3399,44 @@
         }
 
         // --- NEW: DIRECT MESSAGING (DM) ---
-        function renderDmList() {
+        async function renderDmList() {
             const container = document.getElementById('dm-list-container');
-            db.ref(`users/${currentUser.uid}/conversations`).orderByChild('timestamp').on('value', async (snapshot) => {
-                container.innerHTML = '';
-                if (!snapshot.exists()) {
-                    container.innerHTML = '<p style="text-align:center; color: #667781; padding: 40px 20px;">You have no messages. Find friends to start chatting.</p>';
-                    return;
-                }
-                let conversations = [];
-                snapshot.forEach(child => conversations.push({ id: child.key, ...child.val() }));
-                conversations.reverse();
+            container.innerHTML = '';
 
-                for (const conv of conversations) {
-                    const otherUserId = conv.id.replace(currentUser.uid, '').replace('_', '');
-                    const userSnap = await db.ref(`users/${otherUserId}`).once('value');
-                    if(userSnap.exists()){
-                        const userData = userSnap.val();
-                        const div = document.createElement('div');
-                        div.className = 'list-item';
-                        div.onclick = () => openDmChat(otherUserId, userData);
-                        div.innerHTML = `<img src="${userData.profileImageUrl}" class="list-item-profile-img"><div class="list-item-details"><div class="list-item-name">${escapeHTML(userData.name)}</div><div class="list-item-subtext">${escapeHTML(conv.lastMessage || '')}</div></div>`;
-                        container.appendChild(div);
-                    }
+            const contacts = currentUser.contacts || {};
+            if (Object.keys(contacts).length === 0) {
+                container.innerHTML = '<p style="text-align:center; color: #667781; padding: 40px 20px;">You have no friends yet. Add friends to start chatting.</p>';
+                return;
+            }
+
+            let chatListItems = [];
+
+            for (const userId of Object.keys(contacts)) {
+                const userSnap = await db.ref(`users/${userId}`).once('value');
+                if (userSnap.exists()) {
+                    const userData = userSnap.val();
+                    const convId = currentUser.uid < userId ? `${currentUser.uid}_${userId}` : `${userId}_${currentUser.uid}`;
+                    const convSnap = await db.ref(`users/${currentUser.uid}/conversations/${convId}`).once('value');
+                    
+                    const convData = convSnap.val() || { lastMessage: 'Tap to start chatting', timestamp: 0 };
+                    
+                    chatListItems.push({
+                        id: userId,
+                        data: userData,
+                        lastMessage: convData.lastMessage,
+                        timestamp: convData.timestamp
+                    });
                 }
+            }
+            
+            chatListItems.sort((a, b) => b.timestamp - a.timestamp);
+
+            chatListItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.onclick = () => openDmChat(item.id, item.data);
+                div.innerHTML = `<img src="${item.data.profileImageUrl}" class="list-item-profile-img"><div class="list-item-details"><div class="list-item-name">${escapeHTML(item.data.name)}</div><div class="list-item-subtext">${escapeHTML(item.lastMessage)}</div></div>`;
+                container.appendChild(div);
             });
         }
         
@@ -3364,40 +3459,55 @@
                 const div = document.createElement('div');
                 const messageClass = msg.sender === myUid ? 'message-sent' : 'message-received';
                 div.className = 'message-bubble ' + messageClass;
-                div.innerHTML = `<div>${linkify(escapeHTML(msg.text))}</div>`;
+                 let contentHTML = '';
+                if(msg.type === 'image' && msg.imageUrl) {
+                    contentHTML += `<img src="${msg.imageUrl}" class="chat-image" onclick="viewPostImage('${msg.imageUrl}')">`;
+                }
+                if (msg.text) {
+                    contentHTML += `<div>${linkify(escapeHTML(msg.text))}</div>`;
+                }
+                div.innerHTML = contentHTML;
                 messagesContainer.appendChild(div);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             });
         }
 
-        async function sendDmMessage() {
+        async function sendDmMessage(textOverride = null, imageUrl = null) {
             const input = document.getElementById('dm-chat-input');
-            const text = input.value.trim();
-            if(!text || !currentDmPartner) return;
+            const text = textOverride || input.value.trim();
+            if(!text && !imageUrl || !currentDmPartner) return;
             
             const myUid = currentUser.uid;
             const otherUserId = currentDmPartner.uid;
             const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
             
             const messageData = {
-                text: text,
                 sender: myUid,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             };
+            
+            if(text) messageData.text = text;
+            if(imageUrl) {
+                messageData.imageUrl = imageUrl;
+                messageData.type = 'image';
+            }
 
+            const lastMessageText = imageUrl ? '[Image]' : text;
             const updates = {};
             const newMessageKey = db.ref(`direct_messages/${convId}`).push().key;
             updates[`direct_messages/${convId}/${newMessageKey}`] = messageData;
-            updates[`users/${myUid}/conversations/${convId}`] = { lastMessage: text, timestamp: firebase.database.ServerValue.TIMESTAMP };
-            updates[`users/${otherUserId}/conversations/${convId}`] = { lastMessage: text, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            updates[`users/${myUid}/conversations/${convId}`] = { lastMessage: lastMessageText, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            updates[`users/${otherUserId}/conversations/${convId}`] = { lastMessage: lastMessageText, timestamp: firebase.database.ServerValue.TIMESTAMP };
             
             await db.ref().update(updates);
             
-            input.value = '';
-            input.style.height = 'auto';
+            if(!textOverride && !imageUrl) {
+                 input.value = '';
+                 input.style.height = 'auto';
+            }
         }
 
-        document.getElementById('dm-chat-send-btn').addEventListener('click', sendDmMessage);
+        document.getElementById('dm-chat-send-btn').addEventListener('click', () => sendDmMessage());
         document.getElementById('dm-chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDmMessage(); } });
 
 

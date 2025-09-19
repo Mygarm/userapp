@@ -186,6 +186,20 @@
         .form-switch-text { color: var(--wa-text-secondary); font-size: 14px; text-align: center; margin-top: 10px; }
         .form-switch-text a { color: var(--wa-link-color); text-decoration: none; cursor: pointer; font-weight: 500; }
         .error-message { color: #d93025; font-size: 13px; text-align: center; min-height: 20px; }
+        
+        /* NEW: Verify Email View Styles */
+        #verify-email-view .verify-box {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--wa-shadow);
+            max-width: 380px;
+        }
+        #verify-email-view h2 { color: var(--wa-header-bg); margin-bottom: 15px; }
+        #verify-email-view p { margin-bottom: 20px; color: var(--wa-text-secondary); line-height: 1.5; }
+        #verify-email-view button { width: 100%; }
+        #verify-email-view .secondary-actions { margin-top: 15px; font-size: 14px; }
+
 
         /* --- Main View --- */
         #main-view { display: none; }
@@ -206,16 +220,15 @@
         .list-item:hover { background-color: var(--wa-app-bg); }
         .list-item:last-child { border-bottom: none; }
         .list-item-profile-img { margin-right: 15px; width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background-color: #ccc; }
-        .list-item-details { flex-grow: 1; }
+        .list-item-details { flex-grow: 1; overflow: hidden; }
         .list-item-name { font-weight: 500; font-size: 17px; margin-bottom: 2px; }
-        .list-item-subtext { font-size: 14px; color: var(--wa-text-secondary); }
+        .list-item-subtext { font-size: 14px; color: var(--wa-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .list-item-actions { display: flex; gap: 10px; }
         .list-item-actions button { background-color: var(--wa-accent-blue); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; }
         .list-item-actions button.reject { background-color: var(--wa-text-secondary); }
 
         /* --- Notification View --- */
         #notifications-view main { padding-top: 10px; }
-        .notification-section h3 { padding: 10px 15px; font-size: 16px; color: var(--wa-header-bg); background-color: var(--wa-app-bg); border-bottom: 1px solid var(--wa-border-color); }
         .notification-item {
             display: flex;
             gap: 10px; align-items: center; padding: 10px 15px;
@@ -814,11 +827,11 @@
         .boost-stat span { display: block; font-size: 16px; font-weight: 700; color: var(--wa-text-primary); }
         .boost-item-footer { font-size: 12px; text-align: center; color: var(--wa-text-secondary); }
         
-        /* CHAT VIEW STYLES - IMPORTANT FOR FIX */
-        #chat-view {
-            display: none; /* Keep this hidden by default */
+        /* CHAT VIEW STYLES (Applies to Channel, DM Chat) */
+        #chat-view, #dm-chat-view {
+            display: none;
         }
-        #chat-messages {
+        #chat-messages, #dm-chat-messages {
             flex-grow: 1;
             overflow-y: auto;
             padding: 10px;
@@ -832,6 +845,13 @@
             max-width: 75%;
             word-wrap: break-word;
             font-size: 15px;
+            position: relative; /* For reactions and menus */
+        }
+        .message-bubble img.chat-image {
+            max-width: 100%;
+            border-radius: 15px;
+            margin-top: 5px;
+            cursor: pointer;
         }
         .message-received {
             background-color: var(--wa-message-in-bg);
@@ -843,7 +863,58 @@
             align-self: flex-end;
             border-top-right-radius: 4px;
         }
-        #chat-input-container {
+        .message-reactions {
+            position: absolute;
+            bottom: -10px;
+            left: 5px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            display: flex;
+            gap: 4px;
+            padding: 2px 4px;
+            font-size: 12px;
+        }
+        .message-sent .message-reactions { left: auto; right: 5px; }
+        .reaction-chip {
+            display: flex; align-items: center;
+            cursor: pointer;
+        }
+        .reaction-chip.user-reacted {
+            background-color: #e0f0ff;
+            padding: 1px 4px;
+            border-radius: 8px;
+        }
+        .message-menu-trigger {
+            display: none;
+            position: absolute;
+            top: -10px;
+            right: 0;
+            background-color: #fff;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            font-size: 14px;
+        }
+        .message-sent:hover .message-menu-trigger { display: flex; }
+        .message-menu {
+            display: none;
+            position: absolute; right: 0; top: 15px;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            overflow: hidden; z-index: 5;
+        }
+        .message-menu button {
+            display: block; width: 100%; text-align: left;
+            border: none; background: none; padding: 8px 12px;
+            cursor: pointer; font-size: 14px;
+        }
+        .message-menu button:hover { background-color: #f0f0f0; }
+
+        #chat-input-container, #dm-chat-input-container {
             padding: 8px 12px;
             display: flex;
             align-items: flex-end;
@@ -851,7 +922,7 @@
             background-color: var(--wa-app-bg);
             flex-shrink: 0;
         }
-        #chat-input {
+        #chat-input, #dm-chat-input {
             flex-grow: 1;
             border-radius: 20px;
             border: 1px solid var(--wa-border-color);
@@ -861,7 +932,7 @@
             max-height: 100px;
             overflow-y: auto;
         }
-        #chat-send-btn {
+        #chat-send-btn, #dm-chat-send-btn {
             border: none;
             background-color: var(--wa-button-color);
             border-radius: 50%;
@@ -924,15 +995,16 @@
             font-size: 13px;
             color: var(--wa-text-secondary);
         }
+        /* CHANGED: Logout Button Color */
         #logout-btn {
-            background-color: #d93025;
+            background-color: var(--wa-text-secondary); /* Changed from red to gray */
             color: white;
-            border-color: #d93025;
+            border-color: var(--wa-text-secondary);
             margin: 20px; 
             width: calc(100% - 40px);
         }
         #logout-btn svg { fill: white; }
-        #logout-btn:hover { background-color: #c62828; }
+        #logout-btn:hover { background-color: #5a6871; } /* Darker gray on hover */
 
     </style>
 </head>
@@ -978,6 +1050,19 @@
             </form>
         </div>
 
+        <!-- NEW: Verify Email View -->
+        <div id="verify-email-view" class="view" style="display: none;">
+            <div class="verify-box">
+                <h2>Verify Your Email</h2>
+                <p>A verification link has been sent to <strong id="verification-email-display">your email</strong>. Please check your inbox (and spam folder) and click the link to activate your account.</p>
+                <button id="resend-verification-btn">Resend Verification Email</button>
+                <div class="secondary-actions">
+                    <p class="form-switch-text">Wrong email? <a id="logout-from-verify-btn">Log out and sign up again</a>.</p>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Main View -->
         <div id="main-view" class="view">
             <header class="main-header">
@@ -991,8 +1076,9 @@
                             <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"></path></svg>
                             <span id="notification-badge" class="badge"></span>
                         </button>
-                        <button id="add-friend-btn" class="icon-btn" title="Add Friend">
-                            <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                        <!-- CHANGED: Add Friend icon is now a Messaging icon -->
+                        <button id="nav-dm-btn" class="icon-btn" title="Messages">
+                            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
                         </button>
                         <button id="menu-btn" class="icon-btn" title="Profile & Settings" style="padding: 0;">
                             <img id="header-profile-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f0f2f5'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
@@ -1000,7 +1086,8 @@
                     </div>
                 </div>
                 <div id="search-container" style="display: none; padding: 0 15px 10px;">
-                    <input type="text" id="search-input" placeholder="Search by name or ID (e.g., jg-1234)" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--wa-border-color);">
+                    <!-- CHANGED: Placeholder text for search input -->
+                    <input type="text" id="search-input" placeholder="Search by name, ID, or #tag" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--wa-border-color);">
                 </div>
                 <nav class="header-nav">
                     <button id="nav-posts" class="nav-tab active" title="Posts">
@@ -1009,8 +1096,9 @@
                     <button id="nav-watch" class="nav-tab" title="Watch">
                         <svg viewBox="0 0 24 24"><path d="M10 16.5v-9l6 4.5-6 4.5zM20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/></svg>
                     </button>
+                    <!-- UPDATED: Channel Icon to Megaphone -->
                     <button id="nav-channels" class="nav-tab" title="Channels">
-                       <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                       <svg viewBox="0 0 24 24"><path d="M21 4H3C2.45 4 2 4.45 2 5v14c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM4 18V6h16v12H4zm-2-2h10v-2H2v2zm0-4h12V8H2v4z"></path></svg>
                     </button>
                     <button id="nav-groups" class="nav-tab" title="Groups">
                         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
@@ -1071,7 +1159,7 @@
             </main>
         </div>
 
-        <!-- Notifications View -->
+        <!-- Notifications View (CHANGED) -->
         <div id="notifications-view" class="view" style="display: none;">
              <header class="page-header">
                 <button class="back-btn icon-btn">
@@ -1080,18 +1168,21 @@
                 <span class="page-title">Notifications</span>
              </header>
             <main>
-                <div class="notification-section">
-                    <h3>Post Notifications</h3>
-                    <div id="post-notifications-list"></div>
-                </div>
-                <div class="notification-section">
-                    <h3>Friend Requests</h3>
-                    <div id="friend-requests-list"></div>
-                </div>
-                 <div class="notification-section">
-                     <h3>Call History</h3>
-                    <div id="call-logs-list"></div>
-                </div>
+                <!-- This single div will now hold all types of notifications -->
+                <div id="unified-notifications-list"></div>
+            </main>
+        </div>
+
+        <!-- NEW: Direct Messages (DM) List View -->
+        <div id="dm-view" class="view" style="display: none;">
+            <header class="page-header">
+                <button class="back-btn icon-btn">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+                </button>
+                <span class="page-title">Messages</span>
+            </header>
+            <main>
+                <div id="dm-list-container" style="width:100%;"></div>
             </main>
         </div>
 
@@ -1225,6 +1316,14 @@
                         <div class="details">
                             <div class="title">Referral Program</div>
                             <div class="subtitle">Total Referrals: <span id="total-referrals-count">0</span></div>
+                        </div>
+                    </div>
+                    <!-- NEW: Add Friend moved here -->
+                    <div id="add-friend-item" class="settings-item">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg></div>
+                        <div class="details">
+                            <div class="title">Add Friend</div>
+                            <div class="subtitle">Add new friends by ID or QR code</div>
                         </div>
                     </div>
                 </div>
@@ -1364,8 +1463,36 @@
             <main id="chat-messages" style="background-color: var(--wa-chat-bg);"></main>
 
             <footer id="chat-input-container">
+                <!-- UPDATED: Added image upload button -->
+                <input type="file" id="chat-image-input" accept="image/*" style="display: none;">
+                <button id="chat-attach-btn" class="icon-btn" style="color: var(--wa-text-secondary); background-color: white; border-radius: 50%; width: 44px; height: 44px; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"></path></svg>
+                </button>
                 <textarea id="chat-input" placeholder="Message" rows="1"></textarea>
                 <button id="chat-send-btn">
+                     <svg viewBox="0 0 24 24" fill="white" width="24px" height="24px"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                </button>
+            </footer>
+        </div>
+
+        <!-- NEW: DM Chat View -->
+        <div id="dm-chat-view" class="view" style="display: none;">
+            <header class="page-header">
+                <button class="back-btn icon-btn">
+                     <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+                </button>
+                <img id="dm-chat-header-img" class="list-item-profile-img" alt="Profile Pic">
+                <div id="dm-chat-header-info" class="list-item-details">
+                    <div id="dm-chat-header-name" class="list-item-name"></div>
+                     <div id="dm-chat-header-subtext" class="list-item-subtext"></div>
+                </div>
+            </header>
+
+            <main id="dm-chat-messages" style="background-color: var(--wa-chat-bg);"></main>
+
+            <footer id="dm-chat-input-container">
+                <textarea id="dm-chat-input" placeholder="Message" rows="1"></textarea>
+                <button id="dm-chat-send-btn">
                      <svg viewBox="0 0 24 24" fill="white" width="24px" height="24px"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
                 </button>
             </footer>
@@ -1397,8 +1524,9 @@
                 </button>
                 <span class="page-title">My Wallet</span>
                  <div class="header-actions" style="margin-left:auto;">
+                    <!-- CHANGED: Withdraw Money Icon -->
                     <button id="withdraw-money-btn" class="icon-btn" title="Withdraw Money">
-                        <svg viewBox="0 0 24 24"><path d="M10 16.5v-3l-4 4 4 4v-3h12v-2H10zM4 5h12V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12v-2H4V5z"></path></svg>
+                        <svg viewBox="0 0 24 24"><path d="M3,11H5.5L2,7.5L5.5,4H3V11M22,5V19A2,2 0 0,1 20,21H7A2,2 0 0,1 5,19V16H7V19H20V5H7V8H5V5A2,2 0 0,1 7,3H20A2,2 0 0,1 22,5Z"></path></svg>
                     </button>
                     <button id="add-money-btn" class="icon-btn" title="Add Money">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"></path></svg>
@@ -1600,7 +1728,7 @@
         const cloudinaryConfig = { cloudName: "dzmo138qb", uploadPreset: "textsms" };
         
         // --- GLOBAL STATE ---
-        let currentUser = null, currentChannel = null;
+        let currentUser = null, currentChannel = null, currentDmPartner = null;
         let totalNotifications = 0, currentView = 'loading-view', html5QrCode = null, scannerMode = null;
         let postImageFile = null; 
         let badgePackagesConfig = null;
@@ -1615,21 +1743,21 @@
         const hardcodedBadgePackagesConfig = {
             "silver": {
                 "name": "Silver Package",
-                "priceUSD": 1.00,
+                "priceUSD": 0.39,
                 "durationDays": 7,
                 "postLimitPerDay": 10,
                 "iconColor": "#A9A9A9"
             },
             "gold": {
                 "name": "Gold Package",
-                "priceUSD": 1.99,
+                "priceUSD": 0.59,
                 "durationDays": 15,
                 "postLimitPerDay": 10,
                 "iconColor": "#FFD700"
             },
             "diamond": {
                 "name": "Diamond Package",
-                "priceUSD": 3.99,
+                "priceUSD": 0.99,
                 "durationDays": 30,
                 "postLimitPerDay": 10,
                 "iconColor": "#b9f2ff"
@@ -1653,6 +1781,8 @@
                 if (viewId === 'wallet-view') renderWalletView();
                 if (viewId === 'badge-request-view') renderBadgePackages();
                 if (viewId === 'boost-dashboard-view') renderBoostDashboard();
+                if (viewId === 'notifications-view') renderUnifiedNotifications();
+                if (viewId === 'dm-view') renderDmList();
             }
         };
 
@@ -1683,7 +1813,40 @@
         // --- UTILITY FUNCTIONS ---
         const generateJgId = () => `jg-${Math.floor(1000 + Math.random() * 9000)}`;
         const escapeHTML = (str) => str.replace(/[&<>"']/g, (match) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#39;'}[match]));
-        const linkify = (inputText) => { const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; return inputText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`); };
+        
+        const linkify = (inputText) => {
+            const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            const hashtagRegex = /(#\w+)/g;
+            const mentionRegex = /(@\w+)/g;
+            
+            let linkedText = inputText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+            linkedText = linkedText.replace(hashtagRegex, (hashtag) => `<a href="#" onclick="searchByTag('${hashtag}')" style="color:var(--wa-link-color); text-decoration:none;">${hashtag}</a>`);
+            linkedText = linkedText.replace(mentionRegex, (mention) => `<a href="#" onclick="searchByUserMention('${mention}')" style="color:var(--wa-link-color); text-decoration:none; font-weight: 500;">${mention}</a>`);
+
+            return linkedText;
+        };
+
+        window.searchByTag = (tag) => {
+            alert(`Searching for ${tag}. This feature is under development.`);
+            const searchInput = document.getElementById('search-input');
+            const searchContainer = document.getElementById('search-container');
+            showView('main-view');
+            searchContainer.style.display = 'block';
+            searchInput.value = tag;
+            searchInput.focus();
+            handleSearch({target: searchInput});
+        }
+        
+        window.searchByUserMention = (mention) => {
+            alert(`Searching for user ${mention}. This feature is under development.`);
+            const searchInput = document.getElementById('search-input');
+            const searchContainer = document.getElementById('search-container');
+            showView('main-view');
+            searchContainer.style.display = 'block';
+            searchInput.value = mention.substring(1); 
+            searchInput.focus();
+            handleSearch({target: searchInput});
+        }
         
         function formatNumber(num) {
             if (isNaN(num)) return num;
@@ -1717,6 +1880,12 @@
         // --- AUTHENTICATION & APP INITIALIZATION ---
         auth.onAuthStateChanged(user => { 
             if (user) { 
+                if (!user.emailVerified) {
+                    document.getElementById('verification-email-display').textContent = user.email;
+                    showView('verify-email-view', false);
+                    return;
+                }
+
                 const userRef = db.ref(`users/${user.uid}`);
                 userRef.on('value', (snapshot) => { 
                     if (snapshot.exists()) { 
@@ -1730,20 +1899,18 @@
                             appInitialized = true;
                         }
                         
-                        if (currentView === 'loading-view' || currentView === 'auth-view') {
+                        if (currentView === 'loading-view' || currentView === 'auth-view' || currentView === 'verify-email-view') {
                              showView('main-view', false); 
                         }
                     } else { 
-                        // This case is now less likely as profile is created on signup
-                        // but kept as a fallback.
-                        auth.signOut(); // Force sign out if DB entry is missing
+                        auth.signOut(); 
                     } 
                 }); 
             } else { 
                 currentUser = null;
                 appInitialized = false; 
                 showView('auth-view', false);
-                handleReferralUrl(); // Check for referral code on auth view
+                handleReferralUrl();
             } 
         });
 
@@ -1791,7 +1958,6 @@
             const submitBtn = document.getElementById('signup-submit-btn');
             errDiv.textContent = '';
             
-            // Get form values
             const name = document.getElementById('signup-name').value.trim();
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
@@ -1801,7 +1967,6 @@
             const coverFile = document.getElementById('signup-cover-image').files[0];
             const referCode = document.getElementById('signup-refer-code').value.trim();
 
-            // Validation
             if (!name || !email || !password || !gender || !dob) {
                 errDiv.textContent = "Please fill all required fields.";
                 return;
@@ -1811,20 +1976,16 @@
             submitBtn.textContent = "Signing up...";
 
             try {
-                // 1. Create user in Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // 2. Upload images
+                await user.sendEmailVerification();
+                document.getElementById('verification-email-display').textContent = user.email;
+
                 const profileImageUrl = await uploadImage(profileFile);
                 const coverImageUrl = await uploadImage(coverFile);
-
-                // 3. Prepare profile data
                 const profileData = {
-                    name,
-                    email,
-                    gender,
-                    dob,
+                    name, email, gender, dob,
                     profileImageUrl: profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
                     coverImageUrl: coverImageUrl || '',
                     jgId: generateJgId(),
@@ -1835,16 +1996,13 @@
                     dobChanged: false,
                     genderChanged: false
                 };
-
-                // 4. Save profile data to Realtime Database
                 await db.ref(`users/${user.uid}`).set(profileData);
 
-                // 5. Handle referral if code exists
                 if (referCode) {
                     await handleReferral(referCode, user.uid, name);
                 }
-                
-                // No need to navigate, onAuthStateChanged will handle it.
+
+                showView('verify-email-view');
 
             } catch (err) {
                 errDiv.textContent = err.message;
@@ -1857,34 +2015,39 @@
         document.getElementById('logout-btn').addEventListener('click', () => { auth.signOut(); });
         document.getElementById('show-signup').addEventListener('click', () => { document.getElementById('login-form').style.display = 'none'; document.getElementById('signup-form').style.display = 'flex'; });
         document.getElementById('show-login').addEventListener('click', () => { document.getElementById('signup-form').style.display = 'none'; document.getElementById('login-form').style.display = 'flex'; });
+        document.getElementById('logout-from-verify-btn').addEventListener('click', () => auth.signOut());
+        document.getElementById('resend-verification-btn').addEventListener('click', (e) => {
+            const btn = e.target;
+            btn.disabled = true;
+            btn.textContent = "Sending...";
+            auth.currentUser.sendEmailVerification()
+                .then(() => {
+                    alert("Verification email sent! Check your inbox.");
+                    btn.textContent = "Resend Verification Email";
+                    btn.disabled = false;
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    btn.textContent = "Resend Verification Email";
+                    btn.disabled = false;
+                });
+        });
         
         async function handleReferral(refCode, newUserId, newUserName) {
             const usersRef = db.ref('users');
             const snapshot = await usersRef.orderByChild('jgId').equalTo(refCode).limitToFirst(1).once('value');
-
             if (snapshot.exists()) {
                 const referrerUid = Object.keys(snapshot.val())[0];
                 const referralBonus = 0.20;
-                
                 const updates = {};
-                // Add to new user's main balance
                 updates[`/users/${newUserId}/wallet/main`] = firebase.database.ServerValue.increment(referralBonus);
                 updates[`/users/${newUserId}/referredBy`] = referrerUid;
-                
-                // Add to referrer's refer balance
                 updates[`/users/${referrerUid}/wallet/refer`] = firebase.database.ServerValue.increment(referralBonus);
-
-                // Transaction for new user
                 const newUserTxKey = db.ref(`transactionHistory/${newUserId}`).push().key;
                 updates[`/transactionHistory/${newUserId}/${newUserTxKey}`] = { amount: referralBonus, reason: "Sign-up bonus from referral", timestamp: firebase.database.ServerValue.TIMESTAMP };
-                
-                // Transaction for referrer
                 const referrerTxKey = db.ref(`transactionHistory/${referrerUid}`).push().key;
                 updates[`/transactionHistory/${referrerUid}/${referrerTxKey}`] = { amount: referralBonus, reason: `Referral bonus from ${newUserName}`, timestamp: firebase.database.ServerValue.TIMESTAMP };
-                
                 await db.ref().update(updates);
-                
-                // Notifications
                 createNotification(newUserId, 'welcome_bonus', `আপনি সাইনআপ করার জন্য $${referralBonus.toFixed(2)} ফ্রী পেয়েছেন।`, null);
                 createNotification(referrerUid, 'referral_bonus', `${newUserName} joined using your referral. You earned $${referralBonus.toFixed(2)}!`, null);
             }
@@ -1897,7 +2060,6 @@
         function initializeApp() {
             loadBadgePackageConfig();
             listenForFriendRequests();
-            renderCallLogs();
             listenAndRenderChannels();
             listenAndRenderPosts();
             listenForNotifications();
@@ -1916,7 +2078,7 @@
         document.getElementById('nav-channels').addEventListener('click', () => showPanel('channels-content'));
         document.getElementById('nav-groups').addEventListener('click', () => showPanel('groups-content'));
         document.getElementById('menu-btn').addEventListener('click', () => showView('profile-view'));
-        document.getElementById('add-friend-btn').addEventListener('click', () => showModal('add-friend-modal'));
+        document.getElementById('nav-dm-btn').addEventListener('click', () => showView('dm-view'));
         document.getElementById('notification-btn').addEventListener('click', () => showView('notifications-view'));
         document.getElementById('request-badge-btn').addEventListener('click', () => showView('badge-request-view'));
         document.getElementById('my-wallet-btn').addEventListener('click', () => showView('wallet-view'));
@@ -1948,84 +2110,127 @@
         document.getElementById('save-channel-changes-btn').addEventListener('click', async () => { if (!currentChannel) return; const button = document.getElementById('save-channel-changes-btn'); button.disabled = true; button.textContent = "Saving..."; const newName = document.getElementById('edit-channel-name-input').value.trim(); const imageFile = document.getElementById('edit-channel-image-input').files[0]; const updates = {}; if (newName && newName !== currentChannel.name) { updates['info/name'] = newName; } if (imageFile) { const newImageUrl = await uploadImage(imageFile); if (newImageUrl) { updates['info/profileImageUrl'] = newImageUrl; } } if (Object.keys(updates).length > 0) { await db.ref(`channels/${currentChannel.id}`).update(updates); } button.disabled = false; button.textContent = "Save Changes"; showModal('edit-channel-modal', false); alert("Channel info updated!"); goBack(); });
         document.getElementById('delete-channel-btn').addEventListener('click', async () => { if (!currentChannel) return; if (confirm(`Are you sure you want to permanently delete the channel "${currentChannel.name}"? This action cannot be undone.`)) { const channelId = currentChannel.id; const membersSnapshot = await db.ref(`channels/${channelId}/members`).once('value'); if (membersSnapshot.exists()) { const memberUids = Object.keys(membersSnapshot.val()); const promises = memberUids.map(uid => db.ref(`users/${uid}/channels/${channelId}`).remove()); await Promise.all(promises); } await db.ref(`channel_messages/${channelId}`).remove(); await db.ref(`channels/${channelId}`).remove(); alert(`Channel "${currentChannel.name}" has been deleted.`); showView('main-view');} document.getElementById('channel-options-menu').style.display = 'none'; });
         
-        // --- NOTIFICATIONS & FRIEND REQUESTS ---
-        function updateNotificationBadge() { const badge = document.getElementById('notification-badge'); badge.textContent = totalNotifications; badge.style.display = totalNotifications > 0 ? 'block' : 'none'; }
+        // --- NOTIFICATIONS & FRIEND REQUESTS (CHANGED FOR UNIFIED VIEW) ---
+        function updateNotificationBadge() {
+            db.ref(`notifications/${currentUser.uid}`).orderByChild('read').equalTo(false).once('value', notifSnapshot => {
+                const unreadPostNotifs = notifSnapshot.numChildren();
+                db.ref(`requests/${currentUser.uid}`).once('value', requestSnapshot => {
+                    let incomingRequestCount = 0;
+                    if(requestSnapshot.exists()) {
+                        requestSnapshot.forEach(child => { if(child.val().type === 'incoming') incomingRequestCount++; });
+                    }
+                    totalNotifications = unreadPostNotifs + incomingRequestCount;
+                    const badge = document.getElementById('notification-badge');
+                    badge.textContent = totalNotifications;
+                    badge.style.display = totalNotifications > 0 ? 'block' : 'none';
+                });
+            });
+        }
         
         function listenForNotifications() {
-            const postNotificationsList = document.getElementById('post-notifications-list');
             const notificationsRef = db.ref(`notifications/${currentUser.uid}`);
-            
             notificationsRef.on('child_added', child => {
                 const notif = { id: child.key, ...child.val() };
                 if (appInitialized && !notif.read) {
                     notificationSound.play().catch(e => console.log("Audio play failed, user interaction needed."));
                 }
-                renderSingleNotification(notif, postNotificationsList);
-                updateUnreadCount();
+                updateNotificationBadge();
             });
-
-            notificationsRef.on('child_changed', child => {
-                const notif = { id: child.key, ...child.val() };
-                renderSingleNotification(notif, postNotificationsList); 
-                updateUnreadCount();
-            });
-            
-             notificationsRef.on('child_removed', child => {
-                const el = document.getElementById(`notif-${child.key}`);
-                if (el) el.remove();
-                updateUnreadCount();
-            });
-
-            notificationsRef.once('value', snapshot => {
-                postNotificationsList.innerHTML = '';
-                if(snapshot.exists()) {
-                    snapshot.forEach(child => renderSingleNotification({ id: child.key, ...child.val() }, postNotificationsList));
-                }
-                updateUnreadCount();
-            });
+            notificationsRef.on('child_changed', () => updateNotificationBadge());
+            notificationsRef.on('child_removed', () => updateNotificationBadge());
+            notificationsRef.once('value', () => updateNotificationBadge());
         }
 
-        function renderSingleNotification(notification, container) {
-            let existingDiv = document.getElementById(`notif-${notification.id}`);
-            if(existingDiv) existingDiv.remove();
-
-            const div = document.createElement('div');
-            div.id = `notif-${notification.id}`;
-            div.className = 'notification-item';
-            if (!notification.read) div.classList.add('unread');
-            div.onclick = (event) => goToPostFromNotification(notification.postId, notification.id, event);
-            
-            let fromUserImage = notification.fromUserImage || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23ccc\'%3E%3Cpath d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z\'/%3E%3C/svg%3E';
-            div.innerHTML = `<img src="${fromUserImage}" class="list-item-profile-img" style="width:40px; height:40px;" alt="P"><div class="list-item-details"><div class="list-item-name">${escapeHTML(notification.fromUserName || 'System') }</div><div class="list-item-subtext">${escapeHTML(notification.text)}</div></div>`;
-            
-            container.prepend(div); 
-            if (container.childElementCount > 0 && container.querySelector('p')) {
-                 container.querySelector('p').remove();
-            }
+        function listenForFriendRequests() {
+            db.ref(`requests/${currentUser.uid}`).on('value', () => {
+                updateNotificationBadge();
+            });
         }
+        
+        async function renderUnifiedNotifications() {
+            const container = document.getElementById('unified-notifications-list');
+            container.innerHTML = '<p style="text-align:center; color: #667781; padding: 20px;">Loading notifications...</p>';
 
-        function updateUnreadCount() {
-            const postNotificationsList = document.getElementById('post-notifications-list');
-            db.ref(`notifications/${currentUser.uid}`).orderByChild('read').equalTo(false).once('value', notifSnapshot => {
-                let unreadPostNotifs = notifSnapshot.numChildren();
-                if(postNotificationsList.childElementCount === 0) postNotificationsList.innerHTML = '<p style="text-align:center; color: #667781; padding: 20px;">No new post notifications.</p>';
+            let allNotifications = [];
 
-                db.ref(`requests/${currentUser.uid}`).once('value', requestSnapshot => {
-                    let incomingRequestCount = 0;
-                    if(requestSnapshot.exists()){ requestSnapshot.forEach(child => { if(child.val().type === 'incoming') incomingRequestCount++; }); }
-                    totalNotifications = unreadPostNotifs + incomingRequestCount;
-                    updateNotificationBadge();
+            // Fetch post/system notifications
+            const notifSnap = await db.ref(`notifications/${currentUser.uid}`).orderByChild('timestamp').once('value');
+            if (notifSnap.exists()) {
+                notifSnap.forEach(child => {
+                    allNotifications.push({
+                        id: child.key,
+                        type: 'post',
+                        data: { id: child.key, ...child.val() },
+                        timestamp: child.val().timestamp
+                    });
                 });
+            }
+
+            // Fetch friend requests
+            const reqSnap = await db.ref(`requests/${currentUser.uid}`).once('value');
+            if (reqSnap.exists()) {
+                reqSnap.forEach(child => {
+                     allNotifications.push({
+                        id: child.key,
+                        type: 'friend_request',
+                        data: { id: child.key, ...child.val() },
+                        timestamp: Date.now() // Friend requests don't have a timestamp, so we use current time
+                    });
+                });
+            }
+            
+            // Sort all notifications by timestamp, descending
+            allNotifications.sort((a, b) => b.timestamp - a.timestamp);
+            
+            container.innerHTML = '';
+            if (allNotifications.length === 0) {
+                 container.innerHTML = '<p style="text-align:center; color: #667781; padding: 20px;">No notifications.</p>';
+                 return;
+            }
+
+            allNotifications.forEach(item => {
+                if(item.type === 'post') {
+                    const notification = item.data;
+                    const div = document.createElement('div');
+                    div.id = `notif-${notification.id}`;
+                    div.className = 'notification-item';
+                    if (!notification.read) div.classList.add('unread');
+                    div.onclick = (event) => goToPostFromNotification(notification.postId, notification.id, event);
+                    
+                    let fromUserImage = notification.fromUserImage || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23ccc\'%3E%3Cpath d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z\'/%3E%3C/svg%3E';
+                    div.innerHTML = `<img src="${fromUserImage}" class="list-item-profile-img" style="width:40px; height:40px;" alt="P"><div class="list-item-details"><div class="list-item-name">${escapeHTML(notification.fromUserName || 'System') }</div><div class="list-item-subtext">${escapeHTML(notification.text)}</div></div>`;
+                    container.appendChild(div);
+                }
+                else if (item.type === 'friend_request') {
+                    const request = item.data;
+                    const fromUid = item.id;
+                     if (currentUser.blocked && currentUser.blocked[fromUid]) return;
+                    const div = document.createElement('div');
+                    div.className = 'list-item';
+                    div.style.cursor = 'default';
+                    
+                    const type = request.type || 'incoming';
+                    switch (type) {
+                        case 'incoming':
+                            div.classList.add('unread');
+                            div.innerHTML = `<img src="${request.profileImageUrl}" class="list-item-profile-img" alt="P"><div class="list-item-details"><div class="list-item-name">${request.name}</div><div class="list-item-subtext">Wants to be your friend</div></div><div class="list-item-actions"><button onclick="handleFriendRequest('${fromUid}', true)">Accept</button><button class="reject" onclick="handleFriendRequest('${fromUid}', false)">Reject</button></div>`;
+                            break;
+                        case 'accepted':
+                            div.innerHTML = `<img src="${request.profileImageUrl}" class="list-item-profile-img" alt="P"><div class="list-item-details"><div class="list-item-name">${request.name}</div><div class="list-item-subtext">Accepted your friend request.</div></div><div class="list-item-actions"><button class="reject" onclick="dismissNotification('requests', '${fromUid}')">Dismiss</button></div>`;
+                            break;
+                        case 'rejected':
+                            div.innerHTML = `<img src="${request.profileImageUrl}" class="list-item-profile-img" alt="P"><div class="list-item-details"><div class="list-item-name">${request.name}</div><div class="list-item-subtext">Declined your friend request.</div></div><div class="list-item-actions"><button class="reject" onclick="dismissNotification('requests', '${fromUid}')">Dismiss</button></div>`;
+                            break;
+                    }
+                    if(div.innerHTML) container.appendChild(div);
+                }
             });
         }
         
-        function listenForFriendRequests() { db.ref(`requests/${currentUser.uid}`).on('value', snapshot => { const list = document.getElementById('friend-requests-list'); list.innerHTML = ''; let incomingRequestCount = 0; if (snapshot.exists()) { snapshot.forEach(childSnapshot => { const request = childSnapshot.val(); const fromUid = childSnapshot.key; if (currentUser.blocked && currentUser.blocked[fromUid]) return; const div = document.createElement('div'); div.className = 'list-item'; div.style.cursor = 'default'; const type = request.type || 'incoming'; switch (type) { case 'incoming': incomingRequestCount++; if(appInitialized) notificationSound.play().catch(e => {}); div.innerHTML = `<img src="${request.profileImageUrl}" class="list-item-profile-img" alt="P"><div class="list-item-details"><div class="list-item-name">${request.name}</div><div class="list-item-subtext">Wants to be your friend</div></div><div class="list-item-actions"><button onclick="handleFriendRequest('${fromUid}', true)">Accept</button><button class="reject" onclick="handleFriendRequest('${fromUid}', false)">Reject</button></div>`; break; case 'accepted': div.innerHTML = `<img src="${request.profileImageUrl}" class="list-item-profile-img" alt="P"><div class="list-item-details"><div class="list-item-name">${request.name}</div><div class="list-item-subtext">Accepted your friend request.</div></div><div class="list-item-actions"><button class="reject" onclick="dismissNotification('requests', '${fromUid}')">Dismiss</button></div>`; break; case 'rejected': div.innerHTML = `<img src="${request.profileImageUrl}" class="list-item-profile-img" alt="P"><div class="list-item-details"><div class="list-item-name">${request.name}</div><div class="list-item-subtext">Declined your friend request.</div></div><div class="list-item-actions"><button class="reject" onclick="dismissNotification('requests', '${fromUid}')">Dismiss</button></div>`; break; } if (div.innerHTML) { list.appendChild(div); } }); } if (list.childElementCount === 0) { list.innerHTML = '<p style="text-align:center; color: #667781; padding: 20px;">No new friend requests.</p>'; } 
-            updateUnreadCount();
-        }); }
-        window.dismissNotification = (type, notificationId) => { db.ref(`${type}/${currentUser.uid}/${notificationId}`).remove(); };
-        window.handleFriendRequest = (fromUid, accepted) => { db.ref(`requests/${currentUser.uid}/${fromUid}`).remove(); const notification = { name: currentUser.name, profileImageUrl: currentUser.profileImageUrl, type: accepted ? 'accepted' : 'rejected' }; db.ref(`requests/${fromUid}/${currentUser.uid}`).set(notification); if (accepted) { db.ref(`users/${currentUser.uid}/contacts/${fromUid}`).set(true); db.ref(`users/${fromUid}/contacts/${currentUser.uid}`).set(true); } };
+        window.dismissNotification = (type, notificationId) => { db.ref(`${type}/${currentUser.uid}/${notificationId}`).remove().then(renderUnifiedNotifications); };
+        window.handleFriendRequest = (fromUid, accepted) => { db.ref(`requests/${currentUser.uid}/${fromUid}`).remove(); const notification = { name: currentUser.name, profileImageUrl: currentUser.profileImageUrl, type: accepted ? 'accepted' : 'rejected' }; db.ref(`requests/${fromUid}/${currentUser.uid}`).set(notification); if (accepted) { db.ref(`users/${currentUser.uid}/contacts/${fromUid}`).set(true); db.ref(`users/${fromUid}/contacts/${currentUser.uid}`).set(true); } renderUnifiedNotifications(); };
         
-        // --- CHANNEL CHAT ---
+        // --- CHANNEL CHAT (UPDATED) ---
         async function openChannelChat(channelId, channelInfo) { 
             db.ref(`channel_messages/${channelId}`).off(); 
             currentChannel = { id: channelId, ...channelInfo }; 
@@ -2050,57 +2255,103 @@
                 document.getElementById('chat-header-subtext').textContent = `${snapshot.numChildren()} members`; 
             }); 
             
-            db.ref(`channel_messages/${channelId}`).limitToLast(50).on('child_added', (snapshot) => {
+            const messagesRef = db.ref(`channel_messages/${channelId}`);
+            messagesRef.limitToLast(50).on('child_added', (snapshot) => {
                  renderOrUpdateChannelMessage(snapshot, messagesContainer);
-            }); 
+            });
+            messagesRef.on('child_changed', (snapshot) => {
+                 renderOrUpdateChannelMessage(snapshot, messagesContainer, true);
+            });
+            messagesRef.on('child_removed', (snapshot) => {
+                const msgElement = document.getElementById(`msg-${snapshot.key}`);
+                if (msgElement) msgElement.remove();
+            });
         }
 
-        function renderOrUpdateChannelMessage(snapshot, container) { 
+        function renderOrUpdateChannelMessage(snapshot, container, isUpdate = false) { 
+            const msgId = snapshot.key;
             const msg = snapshot.val(); 
-            const div = document.createElement('div'); 
+            
+            let div = document.getElementById(`msg-${msgId}`);
+            if (!div) {
+                 div = document.createElement('div');
+                 div.id = `msg-${msgId}`;
+            } else if (!isUpdate) {
+                return; // Already rendered
+            }
+
             const messageClass = msg.sender === currentUser.uid ? 'message-sent' : 'message-received'; 
             div.className = 'message-bubble ' + messageClass; 
-            let contentHTML = linkify(escapeHTML(msg.text || '')); 
+
+            let contentHTML = '';
+            if(msg.type === 'image' && msg.imageUrl) {
+                 contentHTML += `<img src="${msg.imageUrl}" class="chat-image" onclick="viewPostImage('${msg.imageUrl}')">`;
+            }
+            if (msg.text) {
+                contentHTML += `<div>${linkify(escapeHTML(msg.text))}</div>`;
+            }
             
             let senderNameHTML = '';
             if (msg.sender !== currentUser.uid) {
                 senderNameHTML = `<div style="font-weight: 500; color: var(--wa-header-bg); font-size:13px;">${escapeHTML(msg.senderName)}</div>`;
             }
             
-            div.innerHTML = `${senderNameHTML}<div>${contentHTML}</div>`; 
-            container.appendChild(div); 
+            const reactions = { '👍': 'like', '❤️': 'love', '😂': 'haha', '😮': 'wow', '😡': 'angry' };
+            let reactionBar = `<div class="reaction-bar" style="display:none; position:absolute; top:-25px; left:0; background:white; padding: 2px 5px; border-radius:10px; box-shadow: 0 1px 2px rgba(0,0,0,0.2);">`;
+            for(const [emoji, type] of Object.entries(reactions)) {
+                reactionBar += `<span style="cursor:pointer; padding: 2px;" onclick="handleChannelMessageReaction('${currentChannel.id}', '${msgId}', '${type}')">${emoji}</span>`;
+            }
+            reactionBar += `</div>`;
+            
+            let menuHTML = '';
+            if(msg.sender === currentUser.uid) {
+                menuHTML = `<div class="message-menu-trigger" onclick="event.stopPropagation(); this.nextElementSibling.style.display = 'block';">...</div>
+                            <div class="message-menu">
+                                <button onclick="startEditChannelMessage('${msgId}', \`${escapeHTML(msg.text || '')}\`)">Edit</button>
+                                <button onclick="deleteChannelMessage('${currentChannel.id}', '${msgId}')">Delete</button>
+                            </div>`;
+            }
+            
+            let reactionsDisplay = '';
+            if (msg.reactions) {
+                reactionsDisplay += '<div class="message-reactions">';
+                for(const type in msg.reactions) {
+                    const count = Object.keys(msg.reactions[type]).length;
+                    if(count > 0) {
+                        const emoji = Object.keys(reactions).find(key => reactions[key] === type);
+                        const userReactedClass = msg.reactions[type][currentUser.uid] ? 'user-reacted' : '';
+                        reactionsDisplay += `<span class="reaction-chip ${userReactedClass}" onclick="handleChannelMessageReaction('${currentChannel.id}', '${msgId}', '${type}')">${emoji} ${count}</span>`;
+                    }
+                }
+                reactionsDisplay += '</div>';
+            }
+            
+            div.innerHTML = `${senderNameHTML}<div class="message-content-wrapper" onclick="this.querySelector('.reaction-bar').style.display='block'">${contentHTML}</div> ${reactionBar} ${reactionsDisplay} ${menuHTML}`; 
+            
+            if(!isUpdate) {
+                container.appendChild(div); 
+            }
+            
             container.scrollTop = container.scrollHeight; 
         }
 
         document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
-        document.getElementById('chat-input').addEventListener('keypress', (e) => { 
-            if (e.key === 'Enter' && !e.shiftKey) { 
-                e.preventDefault(); 
-                sendMessage(); 
-            } 
-            const textarea = e.target;
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight) + 'px';
-        });
+        document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } const textarea = e.target; textarea.style.height = 'auto'; textarea.style.height = (textarea.scrollHeight) + 'px'; });
         
         function sendMessage() { 
-            const input = document.getElementById('chat-input'); 
-            const text = input.value.trim(); 
-            if (!text || !currentChannel) return; 
-            const messageData = { 
-                type: 'text', 
-                text: text, 
-                sender: currentUser.uid, 
-                senderName: currentUser.name, 
-                timestamp: firebase.database.ServerValue.TIMESTAMP 
-            }; 
-            db.ref(`channel_messages/${currentChannel.id}`).push(messageData); 
-            input.value = ''; 
-            input.style.height = 'auto'; 
+            const input = document.getElementById('chat-input'); const text = input.value.trim(); if (!text || !currentChannel) return; 
+            const messageData = { type: 'text', text: text, sender: currentUser.uid, senderName: currentUser.name, timestamp: firebase.database.ServerValue.TIMESTAMP }; 
+            db.ref(`channel_messages/${currentChannel.id}`).push(messageData); input.value = ''; input.style.height = 'auto'; 
         }
-        
-        // --- CALLS (History View Only) ---
-        function renderCallLogs() { const list = document.getElementById('call-logs-list'); db.ref(`callLogs/${currentUser.uid}`).orderByChild('timestamp').limitToLast(30).on('value', snapshot => { list.innerHTML = ''; if (!snapshot.exists()) { list.innerHTML = '<p style="text-align:center; color: #667781; padding: 20px;">No recent calls.</p>'; return; } const logs = []; snapshot.forEach(child => logs.push(child.val())); logs.reverse().forEach(log => { const div = document.createElement('div'); div.className = 'list-item'; div.style.cursor = 'default'; div.innerHTML = `<img src="${log.partnerProfileImageUrl}" class="list-item-profile-img" alt="P"> <div class="list-item-details"> <div class="list-item-name">${log.partnerName} (${log.type})</div> <div class="list-item-subtext">${log.status} - ${new Date(log.timestamp).toLocaleString()}</div> </div>`; list.appendChild(div); }); }); }
+
+        document.getElementById('chat-attach-btn').addEventListener('click', () => { document.getElementById('chat-image-input').click(); });
+        document.getElementById('chat-image-input').addEventListener('change', async (e) => { const file = e.target.files[0]; if (!file || !currentChannel) return; const imageUrl = await uploadImage(file); if (imageUrl) { const messageData = { type: 'image', imageUrl: imageUrl, sender: currentUser.uid, senderName: currentUser.name, timestamp: firebase.database.ServerValue.TIMESTAMP }; db.ref(`channel_messages/${currentChannel.id}`).push(messageData); } e.target.value = ''; });
+
+        window.handleChannelMessageReaction = (channelId, msgId, reactionType) => { const reactionRef = db.ref(`channel_messages/${channelId}/${msgId}/reactions/${reactionType}/${currentUser.uid}`); reactionRef.once('value', snapshot => { if (snapshot.exists()) { reactionRef.remove(); } else { reactionRef.set(true); } }); };
+        window.deleteChannelMessage = (channelId, msgId) => { if(confirm('Delete this message?')) db.ref(`channel_messages/${channelId}/${msgId}`).remove(); };
+        window.startEditChannelMessage = (msgId, currentText) => { const msgDiv = document.getElementById(`msg-${msgId}`).querySelector('.message-content-wrapper'); msgDiv.innerHTML = `<textarea id="edit-msg-${msgId}" style="width:100%;">${currentText}</textarea><button onclick="saveEditChannelMessage('${currentChannel.id}', '${msgId}')">Save</button>`; };
+        window.saveEditChannelMessage = (channelId, msgId) => { const newText = document.getElementById(`edit-msg-${msgId}`).value; db.ref(`channel_messages/${channelId}/${msgId}`).update({ text: newText, edited: true }); };
+
         
         // --- PROFILE, BADGE & WALLET ---
         async function openProfileView() { 
@@ -2110,8 +2361,8 @@
             display.querySelector('.profile-img').src = currentUser.profileImageUrl; 
             display.querySelector('.name').innerHTML = `${escapeHTML(currentUser.name)} ${getBlueBadgeIcon(hasActiveBadge)}`; 
             display.querySelector('.jgId').textContent = `ID: ${currentUser.jgId}`; 
-            document.getElementById('profile-friends-count').textContent = Object.keys(currentUser.contacts || {}).length; 
-            document.getElementById('profile-followers-count').textContent = Object.keys(currentUser.followers || {}).length; 
+            document.getElementById('profile-friends-count').textContent = formatNumber(Object.keys(currentUser.contacts || {}).length); 
+            document.getElementById('profile-followers-count').textContent = formatNumber(Object.keys(currentUser.followers || {}).length); 
             document.getElementById('profile-likes-count').textContent = '...'; 
             calculateTotalLikes(currentUser.uid).then(totalLikes => { document.getElementById('profile-likes-count').textContent = formatNumber(totalLikes); }); 
             document.getElementById('edit-profile-name').value = currentUser.name; 
@@ -2226,7 +2477,12 @@
         document.getElementById('edit-profile-btn').addEventListener('click', () => { document.getElementById('profile-options').style.display = 'none'; document.getElementById('profile-edit-form').style.display = 'flex'; });
         document.getElementById('save-profile-changes-btn').addEventListener('click', async () => { const button = document.getElementById('save-profile-changes-btn'); button.disabled = true; button.textContent = "Saving..."; const newName = document.getElementById('edit-profile-name').value.trim(); const imageFile = document.getElementById('edit-profile-image').files[0]; const coverFile = document.getElementById('edit-profile-cover').files[0]; let updates = {}; if (newName) updates.name = newName; if (imageFile) { const newImageUrl = await uploadImage(imageFile); if (newImageUrl) updates.profileImageUrl = newImageUrl; } if (coverFile) { const newCoverUrl = await uploadImage(coverFile); if (newCoverUrl) updates.coverImageUrl = newCoverUrl; } db.ref(`users/${currentUser.uid}`).update(updates).then(() => { alert("Profile updated successfully!"); button.disabled = false; button.textContent = "Save Changes"; openProfileView(); }).catch(err => { alert("Update failed: " + err.message); button.disabled = false; button.textContent = "Save Changes"; }); });
         document.getElementById('chat-more-btn').addEventListener('click', (e) => { e.stopPropagation(); const menu = document.getElementById('channel-options-menu'); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; });
-        document.addEventListener('click', () => { const menu = document.getElementById('channel-options-menu'); if(menu) menu.style.display = 'none'; const postMenus = document.querySelectorAll('.post-dropdown-menu'); postMenus.forEach(m => m.style.display = 'none'); });
+        document.addEventListener('click', () => { 
+            const channelMenu = document.getElementById('channel-options-menu'); 
+            if(channelMenu) channelMenu.style.display = 'none'; 
+            
+            document.querySelectorAll('.post-dropdown-menu, .message-menu, .reaction-bar').forEach(m => m.style.display = 'none'); 
+        });
         
         window.unblockUser = (uidToUnblock) => { db.ref(`users/${currentUser.uid}/blocked/${uidToUnblock}`).remove().then(() => { alert('User unblocked.'); renderBlockedUsers(); }); }
         function renderBlockedUsers() { const list = document.getElementById('blocked-users-list'); list.innerHTML = ''; db.ref(`users/${currentUser.uid}/blocked`).once('value', snapshot => { if (!snapshot.exists()) { list.innerHTML = '<p style="font-size:12px; text-align:center; color: #667781;">No users blocked.</p>'; return; } snapshot.forEach(childSnapshot => { db.ref(`users/${childSnapshot.key}`).once('value', userSnap => { if (userSnap.exists()) { const user = userSnap.val(); const item = document.createElement('div'); item.className = 'list-item'; item.innerHTML = `<img src="${user.profileImageUrl}" class="list-item-profile-img" alt="U"><div class="list-item-details"><div class="list-item-name">${user.name}</div></div><div class="list-item-actions"><button onclick="unblockUser('${childSnapshot.key}')">Unblock</button></div>`; list.appendChild(item); } }); }); }); }
@@ -2445,8 +2701,8 @@
             infoDisplay.querySelector('.profile-cover-photo').src = userData.coverImageUrl || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; 
             infoDisplay.querySelector('.profile-img').src = userData.profileImageUrl; 
             infoDisplay.querySelector('.name').innerHTML = `${escapeHTML(userData.name)} ${getBlueBadgeIcon(userHasActiveBadge)}`; 
-            document.getElementById('user-profile-friends-count').textContent = Object.keys(userData.contacts || {}).length; 
-            document.getElementById('user-profile-followers-count').textContent = Object.keys(userData.followers || {}).length; 
+            document.getElementById('user-profile-friends-count').textContent = formatNumber(Object.keys(userData.contacts || {}).length); 
+            document.getElementById('user-profile-followers-count').textContent = formatNumber(Object.keys(userData.followers || {}).length); 
             document.getElementById('user-profile-likes-count').textContent = '...'; 
             calculateTotalLikes(userId).then(totalLikes => { document.getElementById('user-profile-likes-count').textContent = formatNumber(totalLikes); }); 
             
@@ -2469,8 +2725,8 @@
             friendBtn.disabled = false;
             const isFriend = currentUser.contacts && currentUser.contacts[userId];
             if (isFriend) {
-                friendBtn.innerHTML = `<span>Friends</span>`;
-                friendBtn.onclick = () => unfriendUser(userId); 
+                friendBtn.innerHTML = `<span>Message</span>`;
+                friendBtn.onclick = () => openDmChat(userId, userData);
             } else {
                 const sentRequestSnap = await db.ref(`requests/${userId}/${currentUser.uid}`).once('value');
                 const receivedRequestSnap = await db.ref(`requests/${currentUser.uid}/${userId}`).once('value');
@@ -2853,6 +3109,11 @@
                 resultsContainer.style.display = 'none';
                 return;
             }
+            if (query.startsWith('#')) {
+                resultsContainer.innerHTML = `<p style="text-align:center; color: #667781; padding: 20px;">Hashtag search is a feature in development.</p>`;
+                resultsContainer.style.display = 'block';
+                return;
+            }
 
             if (allUsersCache.length === 0) {
                 const usersSnap = await db.ref('users').once('value');
@@ -2876,7 +3137,7 @@
             if (results.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color: #667781; padding: 20px;">No users found.</p>';
             } else {
-                results.slice(0, 20).forEach(user => { // Limit results to 20
+                results.slice(0, 20).forEach(user => { 
                     if (user.uid === currentUser.uid) return;
                     const div = document.createElement('div');
                     div.className = 'list-item';
@@ -2901,7 +3162,6 @@
             document.getElementById('change-gender-item').style.opacity = currentUser.genderChanged ? '0.5' : '1';
             renderBlockedUsers();
             
-            // Calculate total referrals
             const usersRef = db.ref('users');
             const snapshot = await usersRef.orderByChild('referredBy').equalTo(currentUser.uid).once('value');
             document.getElementById('total-referrals-count').textContent = snapshot.numChildren();
@@ -2910,30 +3170,10 @@
         function setupSettingsListeners() {
             document.getElementById('profile-settings-btn').addEventListener('click', () => showView('settings-view'));
 
-            // Change Email
             document.getElementById('change-email-item').addEventListener('click', () => {
-                const password = prompt("To change your email, please enter your current password:");
-                if (!password) return;
-
-                const newEmail = prompt("Enter your new email address:");
-                if (!newEmail) return;
-
-                const user = auth.currentUser;
-                const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
-
-                user.reauthenticateWithCredential(credential).then(() => {
-                    return user.updateEmail(newEmail);
-                }).then(() => {
-                    return db.ref(`users/${user.uid}`).update({ email: newEmail });
-                }).then(() => {
-                    alert("Email updated successfully!");
-                    openSettingsView(); // Refresh the view
-                }).catch(error => {
-                    alert("Error: " + error.message);
-                });
+                alert("For security reasons, email cannot be changed after verification.");
             });
 
-            // Change Password
             document.getElementById('change-password-item').addEventListener('click', () => showModal('change-password-modal'));
             document.getElementById('close-change-password-modal-btn').addEventListener('click', () => showModal('change-password-modal', false));
             document.getElementById('save-new-password-btn').addEventListener('click', () => {
@@ -2941,13 +3181,10 @@
                 const currPass = document.getElementById('current-password-input').value;
                 const newPass = document.getElementById('new-password-input').value;
                 const confirmPass = document.getElementById('confirm-password-input').value;
-                
                 if(!currPass || !newPass || !confirmPass) { errDiv.textContent = "All fields are required."; return; }
                 if(newPass !== confirmPass) { errDiv.textContent = "New passwords do not match."; return; }
-                
                 const user = auth.currentUser;
                 const credential = firebase.auth.EmailAuthProvider.credential(user.email, currPass);
-                
                 user.reauthenticateWithCredential(credential).then(() => {
                     return user.updatePassword(newPass);
                 }).then(() => {
@@ -2965,7 +3202,6 @@
                 }
             });
 
-            // Date of Birth
             document.getElementById('change-dob-item').addEventListener('click', () => {
                 if (currentUser.dobChanged) {
                     alert("You can only change your date of birth once.");
@@ -2979,7 +3215,6 @@
                 }
             });
 
-            // Gender
             document.getElementById('change-gender-item').addEventListener('click', () => {
                 if (currentUser.genderChanged) {
                     alert("You can only change your gender once.");
@@ -2995,7 +3230,6 @@
                 }
             });
             
-            // Referral Program
             document.getElementById('referral-program-item').addEventListener('click', () => {
                  document.getElementById('referral-code-input').value = currentUser.jgId;
                  const appUrl = window.location.origin + window.location.pathname;
@@ -3005,6 +3239,7 @@
             document.getElementById('close-referral-modal-btn').addEventListener('click', () => showModal('referral-modal', false));
             document.getElementById('copy-referral-code-btn').addEventListener('click', (e) => { navigator.clipboard.writeText(document.getElementById('referral-code-input').value); e.target.textContent = "Copied!"; setTimeout(() => e.target.textContent = "Copy", 1500); });
             document.getElementById('copy-referral-link-btn').addEventListener('click', (e) => { navigator.clipboard.writeText(document.getElementById('referral-link-input').value); e.target.textContent = "Copied!"; setTimeout(() => e.target.textContent = "Copy", 1500); });
+            document.getElementById('add-friend-item').addEventListener('click', () => showModal('add-friend-modal'));
         }
         
         // --- NEW: WALLET ACTIONS ---
@@ -3081,6 +3316,91 @@
                 errDiv.textContent = "Could not submit request. Please try again.";
             }
         }
+
+        // --- NEW: DIRECT MESSAGING (DM) ---
+        function renderDmList() {
+            const container = document.getElementById('dm-list-container');
+            db.ref(`users/${currentUser.uid}/conversations`).orderByChild('timestamp').on('value', async (snapshot) => {
+                container.innerHTML = '';
+                if (!snapshot.exists()) {
+                    container.innerHTML = '<p style="text-align:center; color: #667781; padding: 40px 20px;">You have no messages. Find friends to start chatting.</p>';
+                    return;
+                }
+                let conversations = [];
+                snapshot.forEach(child => conversations.push({ id: child.key, ...child.val() }));
+                conversations.reverse();
+
+                for (const conv of conversations) {
+                    const otherUserId = conv.id.replace(currentUser.uid, '').replace('_', '');
+                    const userSnap = await db.ref(`users/${otherUserId}`).once('value');
+                    if(userSnap.exists()){
+                        const userData = userSnap.val();
+                        const div = document.createElement('div');
+                        div.className = 'list-item';
+                        div.onclick = () => openDmChat(otherUserId, userData);
+                        div.innerHTML = `<img src="${userData.profileImageUrl}" class="list-item-profile-img"><div class="list-item-details"><div class="list-item-name">${escapeHTML(userData.name)}</div><div class="list-item-subtext">${escapeHTML(conv.lastMessage || '')}</div></div>`;
+                        container.appendChild(div);
+                    }
+                }
+            });
+        }
+        
+        async function openDmChat(otherUserId, otherUserData) {
+            currentDmPartner = { uid: otherUserId, ...otherUserData };
+            const messagesContainer = document.getElementById('dm-chat-messages');
+            messagesContainer.innerHTML = '';
+
+            document.getElementById('dm-chat-header-img').src = currentDmPartner.profileImageUrl;
+            document.getElementById('dm-chat-header-name').textContent = currentDmPartner.name;
+            document.getElementById('dm-chat-header-subtext').textContent = "online"; // Placeholder
+
+            showView('dm-chat-view');
+
+            const myUid = currentUser.uid;
+            const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
+
+            db.ref(`direct_messages/${convId}`).limitToLast(50).on('child_added', (snapshot) => {
+                const msg = snapshot.val();
+                const div = document.createElement('div');
+                const messageClass = msg.sender === myUid ? 'message-sent' : 'message-received';
+                div.className = 'message-bubble ' + messageClass;
+                div.innerHTML = `<div>${linkify(escapeHTML(msg.text))}</div>`;
+                messagesContainer.appendChild(div);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+
+        async function sendDmMessage() {
+            const input = document.getElementById('dm-chat-input');
+            const text = input.value.trim();
+            if(!text || !currentDmPartner) return;
+            
+            const myUid = currentUser.uid;
+            const otherUserId = currentDmPartner.uid;
+            const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
+            
+            const messageData = {
+                text: text,
+                sender: myUid,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            const updates = {};
+            const newMessageKey = db.ref(`direct_messages/${convId}`).push().key;
+            updates[`direct_messages/${convId}/${newMessageKey}`] = messageData;
+            updates[`users/${myUid}/conversations/${convId}`] = { lastMessage: text, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            updates[`users/${otherUserId}/conversations/${convId}`] = { lastMessage: text, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            
+            await db.ref().update(updates);
+            
+            input.value = '';
+            input.style.height = 'auto';
+        }
+
+        document.getElementById('dm-chat-send-btn').addEventListener('click', sendDmMessage);
+        document.getElementById('dm-chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDmMessage(); } });
+
+
     </script>
 </body>
 </html>

@@ -188,7 +188,7 @@
         .auth-form { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 14px; margin: 0 auto; }
         .auth-form input, .auth-form select { border-radius: 8px; border: 1px solid #ccc; background-color: #fff; color: var(--wa-text-primary); padding: 12px; font-family: 'Roboto', sans-serif; font-size: 16px; width: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
         .auth-form input:focus, .auth-form select:focus { outline: none; border-color: var(--wa-header-bg); box-shadow: 0 0 0 2px rgba(0, 92, 151, 0.2); }
-        .auth-form button { border-radius: 8px; background-color: var(--wa-header-bg); color: white; font-weight: 500; font-family: 'Roboto', sans-serif; font-size: 16px; border: none; padding: 14px; cursor: pointer; width: 100%; transition: background-color 0.2s; }
+        .auth-form button { border-radius: 8px; background-color: var(--wa-header-bg); color: white; font-weight: 500; font-family: 'Roboto', sans-serif; font-size: 16px; border: none; padding: 14px; cursor: pointer; width: 100%; transition: background-color 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .auth-form button:hover { background-color: #004c7a; }
         .auth-form button:disabled { background-color: #aaa; cursor: not-allowed;}
         .form-switch-text { color: var(--wa-text-secondary); font-size: 14px; text-align: center; margin-top: 10px; }
@@ -1061,6 +1061,74 @@
         }
         #logout-btn svg { fill: white; }
         #logout-btn:hover { background-color: #5a6871; } /* Darker gray on hover */
+        
+        /* --- NEW: Monetization View --- */
+        #monetization-view main {
+            padding: 20px;
+            width: 100%;
+        }
+        .eligibility-card, .dashboard-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--wa-shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .eligibility-check-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--wa-border-color);
+        }
+        .eligibility-check-item:last-child {
+            border-bottom: none;
+        }
+        .eligibility-check-item .status-icon {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .eligibility-check-item .status-icon.completed {
+            color: #388e3c; /* green */
+        }
+        .eligibility-check-item .status-icon.pending {
+            color: #d32f2f; /* red */
+        }
+        #apply-monetization-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .dashboard-kpi {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .dashboard-kpi .kpi-title {
+            font-size: 16px;
+            color: var(--wa-text-secondary);
+        }
+        .dashboard-kpi .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--wa-header-bg);
+        }
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .dashboard-table th, .dashboard-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--wa-border-color);
+        }
+        .dashboard-table th {
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--wa-text-secondary);
+        }
+        .dashboard-table td {
+            font-size: 15px;
+        }
 
     </style>
 </head>
@@ -1079,7 +1147,10 @@
                 <div id="login-error" class="error-message"></div>
                 <input type="email" id="login-email" placeholder="Email" required>
                 <input type="password" id="login-password" placeholder="Password" required>
-                <button type="submit">Log In</button>
+                <button type="submit" id="login-btn">
+                    <span class="btn-text">Log In</span>
+                    <div class="loader-small" style="display: none;"></div>
+                </button>
                 <p class="form-switch-text">Don't have an account? <a id="show-signup">Sign up</a></p>
             </form>
 
@@ -1287,6 +1358,10 @@
                         <svg viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm8-12v8h8V3h-8zm6 6h-4V5h4v4zm-2 12h-4v-2h2v-2h2v4zM13 13h-2v2h2v-2zm4 0h-2v2h2v-2zm-2 2h-2v2h2v-2zm4 0h-2v2h2v-2zm2-4h-2v2h2v-2zm0-2h-2v2h2v-2zm-2 6h-2v2h2v-2zm-6-4h2v-2h-2v2z"></path></svg>
                         <span>My Profile QR</span>
                     </button>
+                    <button id="monetization-btn" class="text-icon-btn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.25 14.25L7.5 13l1.41-1.41L10 12.83l4.59-4.59L16 9.66l-5.25 6.59z"></path></svg>
+                        <span>Monetization</span>
+                    </button>
                     <button id="boost-dashboard-btn" class="text-icon-btn">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path></svg>
                         <span>Boost Dashboard</span>
@@ -1315,6 +1390,22 @@
                 </div>
             </main>
         </div>
+        
+        <!-- NEW: Monetization View -->
+        <div id="monetization-view" class="view" style="display: none;">
+            <header class="page-header">
+                <button class="back-btn icon-btn">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+                </button>
+                <span class="page-title">Monetization</span>
+            </header>
+            <main>
+                <!-- This will be populated by JS -->
+                <div id="monetization-eligibility" style="width:100%;"></div>
+                <div id="monetization-dashboard" style="display:none; width:100%;"></div>
+            </main>
+        </div>
+
 
         <!-- Settings View -->
         <div id="settings-view" class="view" style="display: none;">
@@ -1752,6 +1843,15 @@
         let allUsersCache = []; // Cache for user search
         const notificationSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaW5nIGN1cmV6YUBnbWFpbC5jb20AAAARTGF2ZjU2LjQwLjEwMQAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9');
 
+        // --- NEW: Monetization Config ---
+        const monetizationConfig = {
+            requiredFollowers: 100,
+            requiredReferrals: 0,
+            adLink: "https://www.revenuecpmgate.com/y4q8yr1w?key=a8e5c1b0e8f18850a4534feaed2c8063",
+            cpm: 0.80, // Cost per 1000 clicks in USD
+            get revenuePerClick() { return this.cpm / 1000; }
+        };
+
 
         // --- HARDCODED CONFIGURATION ---
         const hardcodedBadgePackagesConfig = {
@@ -1797,6 +1897,7 @@
                 if (viewId === 'boost-dashboard-view') renderBoostDashboard();
                 if (viewId === 'notifications-view') renderUnifiedNotifications();
                 if (viewId === 'dm-view') renderDmList();
+                if (viewId === 'monetization-view') renderMonetizationView();
             }
         };
 
@@ -1983,7 +2084,27 @@
         document.getElementById('exit-yes-btn').addEventListener('click', () => { showModal('exit-confirm-modal', false); history.back(); });
         document.getElementById('exit-no-btn').addEventListener('click', () => showModal('exit-confirm-modal', false));
 
-        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value).catch(err => document.getElementById('login-error').textContent = err.message); });
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const btnText = btn.querySelector('.btn-text');
+            const loader = btn.querySelector('.loader-small');
+
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+
+            auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value)
+                .catch(err => {
+                    document.getElementById('login-error').textContent = err.message;
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btnText.style.display = 'inline';
+                    loader.style.display = 'none';
+                });
+        });
+
         
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -2028,7 +2149,8 @@
                     badgeInfo: { packageType: 'free', expiryTimestamp: 0 },
                     dobChanged: false,
                     genderChanged: false,
-                    referralBonusCredited: false
+                    referralBonusCredited: false,
+                    monetization: { status: 'none' } // none, pending, active, rejected
                 };
 
                 if (referCode) {
@@ -2167,6 +2289,8 @@
         document.getElementById('boost-dashboard-btn').addEventListener('click', () => showView('boost-dashboard-view'));
         document.getElementById('close-add-friend-modal-btn').addEventListener('click', () => showModal('add-friend-modal', false));
         document.getElementById('close-post-image-view-btn').addEventListener('click', () => showModal('post-image-view-modal', false));
+        document.getElementById('monetization-btn').addEventListener('click', () => showView('monetization-view'));
+
 
         // --- QR Code & Scanner ---
         document.getElementById('show-qr-btn').addEventListener('click', () => { const qrDisplay = document.getElementById('qr-code-display'); qrDisplay.innerHTML = ''; new QRCode(qrDisplay, { text: currentUser.jgId, width: 200, height: 200 }); document.getElementById('qr-code-text').textContent = currentUser.jgId; showModal('qr-code-modal'); });
@@ -2524,8 +2648,9 @@
             const time = new Date(postData.timestamp).toLocaleString();
             
             const isMyPost = postData.authorUid === currentUser.uid;
+            const isMonetizedAuthor = authorData && authorData.monetization && authorData.monetization.status === 'active';
             
-            let actionButtons = `<button class="post-action-btn" id="like-btn-${postId}" onclick="handleReaction('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg><span id="like-text-${postId}">Like</span><span id="like-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
+            let actionButtons = `<button class="post-action-btn" id="like-btn-${postId}" onclick="handleReaction('${postId}', '${postData.authorUid}', ${isMonetizedAuthor})"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg><span id="like-text-${postId}">Like</span><span id="like-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
             actionButtons += `<button class="post-action-btn" onclick="toggleComments('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path></svg><span>Comment</span><span id="comment-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
             if (!isMyPost) {
                 actionButtons += `<button class="post-action-btn" onclick="initiateDmFromPost('${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg><span>Message</span></button>`;
@@ -2612,8 +2737,57 @@
         };
 
         window.reportPost = (postId) => { if(confirm("Report this post?")) alert("Post reported."); };
-        function createNotification(targetUid, type, text, postId) { if (targetUid === currentUser.uid && type !== 'boost_approved' && type !== 'request_rejected' && type !== 'badge_approved' && type !== 'badge_expiring' && type !== 'boost_expiring' && type !== 'welcome_bonus' ) return; db.ref(`notifications/${targetUid}`).push().set({ fromUserId: currentUser.uid, fromUserName: currentUser.name, fromUserImage: currentUser.profileImageUrl, type: type, text: text, postId: postId, timestamp: firebase.database.ServerValue.TIMESTAMP, read: false }); }
-        window.handleReaction = (postId, postAuthorUid) => { const reactionRef = db.ref(`posts/${postId}/reactions/like/${currentUser.uid}`); reactionRef.once('value', snapshot => { if (snapshot.exists()) { reactionRef.remove(); } else { reactionRef.set(true); createNotification(postAuthorUid, 'like', 'liked your post.', postId); } }); };
+        function createNotification(targetUid, type, text, postId) { if (targetUid === currentUser.uid && type !== 'boost_approved' && type !== 'request_rejected' && type !== 'badge_approved' && type !== 'badge_expiring' && type !== 'boost_expiring' && type !== 'welcome_bonus' && type !== 'monetization_approved' && type !== 'monetization_rejected') return; db.ref(`notifications/${targetUid}`).push().set({ fromUserId: currentUser.uid, fromUserName: currentUser.name, fromUserImage: currentUser.profileImageUrl, type: type, text: text, postId: postId, timestamp: firebase.database.ServerValue.TIMESTAMP, read: false }); }
+        
+        window.handleReaction = (postId, postAuthorUid, isMonetized) => {
+            const reactionRef = db.ref(`posts/${postId}/reactions/like/${currentUser.uid}`);
+            
+            // Monetization Click Handling
+            if (isMonetized && postAuthorUid !== currentUser.uid) {
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                const clickRef = db.ref(`monetizationClicks/${postAuthorUid}/${today}/${currentUser.uid}`);
+                
+                clickRef.once('value', snapshot => {
+                    if (!snapshot.exists()) {
+                        window.open(monetizationConfig.adLink, '_blank');
+                        
+                        const updates = {};
+                        // Record the click
+                        updates[`monetizationClicks/${postAuthorUid}/${today}/${currentUser.uid}`] = true;
+                        
+                        // Increment revenue
+                        const revenue = monetizationConfig.revenuePerClick;
+                        updates[`users/${postAuthorUid}/wallet/main`] = firebase.database.ServerValue.increment(revenue);
+                        
+                        // Add transaction history
+                        const txKey = db.ref(`transactionHistory/${postAuthorUid}`).push().key;
+                        updates[`transactionHistory/${postAuthorUid}/${txKey}`] = {
+                            amount: revenue,
+                            reason: `Monetization revenue from like`,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        };
+
+                        // Add to daily analytics
+                        const analyticsRef = db.ref(`monetizationAnalytics/${postAuthorUid}/${today}`);
+                        updates[`monetizationAnalytics/${postAuthorUid}/${today}/clicks`] = firebase.database.ServerValue.increment(1);
+                        updates[`monetizationAnalytics/${postAuthorUid}/${today}/revenue`] = firebase.database.ServerValue.increment(revenue);
+
+                        db.ref().update(updates);
+                    }
+                });
+            }
+
+            // Like/Unlike Handling
+            reactionRef.once('value', snapshot => {
+                if (snapshot.exists()) {
+                    reactionRef.remove();
+                } else {
+                    reactionRef.set(true);
+                    createNotification(postAuthorUid, 'like', 'liked your post.', postId);
+                }
+            });
+        };
+        
         window.toggleComments = (postId, postAuthorUid) => { const commentsSection = document.getElementById(`comments-for-${postId}`); if (commentsSection.style.display === 'none') { commentsSection.style.display = 'block'; renderComments(postId, postAuthorUid); } else { commentsSection.style.display = 'none'; commentsSection.innerHTML = ''; } };
         async function renderComments(postId, postAuthorUid) { const commentsSection = document.getElementById(`comments-for-${postId}`); commentsSection.innerHTML = `<div style="display:flex; gap:10px; margin-top:15px;"><input type="text" id="comment-input-${postId}" placeholder="Write a comment..." style="flex-grow:1; border: 1px solid #ccc; border-radius:15px; padding: 8px 12px; font-size:14px;"><button onclick="addComment('${postId}', '${postAuthorUid}')" style="border:none; background:none; color: var(--wa-header-bg); font-weight:500; cursor:pointer;">Post</button></div><div id="comment-list-${postId}"></div>`; db.ref(`posts/${postId}/comments`).on('child_added', snapshot => { const commentData = snapshot.val(), commentId = snapshot.key; const commentDiv = document.createElement('div'); commentDiv.className = 'comment-item'; commentDiv.id = `comment-${commentId}`; let deleteBtn = (commentData.authorUid === currentUser.uid) ? `<span class="comment-delete-btn" onclick="deleteComment('${postId}', '${commentId}')">Delete</span>` : ''; commentDiv.innerHTML = `<img src="${commentData.authorProfileImageUrl}" alt="${commentData.authorName}" class="comment-author-img"><div class="comment-content">${deleteBtn}<div class="comment-author-name">${escapeHTML(commentData.authorName)}</div><div>${linkify(commentData.text)}</div></div>`; document.getElementById(`comment-list-${postId}`).prepend(commentDiv); }); }
         window.deleteComment = (postId, commentId) => { if (confirm("Delete this comment?")) { db.ref(`posts/${postId}/comments/${commentId}`).remove(); } };
@@ -2787,6 +2961,7 @@
         }
         
         function listenForAdminActions() {
+            // Boost Requests
             db.ref('boostRequests').orderByChild('userId').equalTo(currentUser.uid).on('child_changed', async (snapshot) => {
                 const request = { id: snapshot.key, ...snapshot.val() };
                 if (request.status === 'approved' && !request.notificationSent) { 
@@ -2805,7 +2980,7 @@
                     notificationSound.play().catch(e => {});
                 }
             });
-
+            // Badge Requests
             db.ref('badgeRequests').orderByChild('userId').equalTo(currentUser.uid).on('child_changed', async (snapshot) => {
                 const request = { id: snapshot.key, ...snapshot.val() };
                  if (request.status === 'approved' && !request.notificationSent) {
@@ -2823,6 +2998,20 @@
                     createNotification(currentUser.uid, 'request_rejected', `Your badge request was rejected. $${request.costUSD.toFixed(2)} refunded.`, null);
                     notificationSound.play().catch(e => {});
                  }
+            });
+            // Monetization Requests
+            db.ref('monetizationRequests').orderByChild('userId').equalTo(currentUser.uid).on('child_changed', (snapshot) => {
+                const request = { id: snapshot.key, ...snapshot.val() };
+                if (request.status === 'approved' && !request.notificationSent) {
+                    createNotification(currentUser.uid, 'monetization_approved', 'Congratulations! Your monetization has been approved.', null);
+                    notificationSound.play().catch(e => {});
+                    db.ref(`monetizationRequests/${request.id}/notificationSent`).set(true);
+                }
+                if (request.status === 'rejected' && !request.notificationSent) {
+                    createNotification(currentUser.uid, 'monetization_rejected', 'Your monetization request has been rejected.', null);
+                    notificationSound.play().catch(e => {});
+                    db.ref(`monetizationRequests/${request.id}/notificationSent`).set(true);
+                }
             });
         }
 
@@ -3557,6 +3746,127 @@
 
         document.getElementById('dm-chat-send-btn').addEventListener('click', () => sendDmMessage());
         document.getElementById('dm-chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDmMessage(); } });
+
+        // --- NEW: MONETIZATION FUNCTIONS ---
+        async function renderMonetizationView() {
+            const eligibilityContainer = document.getElementById('monetization-eligibility');
+            const dashboardContainer = document.getElementById('monetization-dashboard');
+            
+            const status = currentUser.monetization ? currentUser.monetization.status : 'none';
+
+            if (status === 'active') {
+                eligibilityContainer.style.display = 'none';
+                dashboardContainer.style.display = 'block';
+                renderMonetizationDashboard();
+            } else {
+                eligibilityContainer.style.display = 'block';
+                dashboardContainer.style.display = 'none';
+                renderEligibilityCheck();
+            }
+        }
+
+        async function renderEligibilityCheck() {
+            const container = document.getElementById('monetization-eligibility');
+            const followerCount = Object.keys(currentUser.followers || {}).length;
+            
+            const referralsSnap = await db.ref('users').orderByChild('referredBy').equalTo(currentUser.uid).once('value');
+            const referralCount = referralsSnap.numChildren();
+
+            const hasEnoughFollowers = followerCount >= monetizationConfig.requiredFollowers;
+            const hasEnoughReferrals = referralCount >= monetizationConfig.requiredReferrals;
+            const isEligible = hasEnoughFollowers && hasEnoughReferrals;
+
+            let buttonHtml = '';
+            const monetizationStatus = currentUser.monetization ? currentUser.monetization.status : 'none';
+
+            if (monetizationStatus === 'pending') {
+                buttonHtml = `<button id="apply-monetization-btn" class="text-icon-btn primary" disabled>Application Pending</button>`;
+            } else if (monetizationStatus === 'rejected') {
+                buttonHtml = `<p style="text-align:center; color: #d32f2f; margin-top: 15px;">Your previous application was rejected. Please contact support.</p>`;
+            } else if (isEligible) {
+                buttonHtml = `<button id="apply-monetization-btn" class="text-icon-btn primary" onclick="applyForMonetization()">Apply for Monetization</button>`;
+            }
+
+            container.innerHTML = `
+                <div class="eligibility-card">
+                    <h2>Eligibility Requirements</h2>
+                    <div class="eligibility-check-item">
+                        <span>${monetizationConfig.requiredFollowers} Followers (${followerCount})</span>
+                        <span class="status-icon ${hasEnoughFollowers ? 'completed' : 'pending'}">${hasEnoughFollowers ? '✓' : '✗'}</span>
+                    </div>
+                    <div class="eligibility-check-item">
+                        <span>${monetizationConfig.requiredReferrals} Referrals (${referralCount})</span>
+                        <span class="status-icon ${hasEnoughReferrals ? 'completed' : 'pending'}">${hasEnoughReferrals ? '✓' : '✗'}</span>
+                    </div>
+                    ${buttonHtml}
+                </div>`;
+        }
+        
+        window.applyForMonetization = () => {
+            if(confirm("Are you sure you want to apply for monetization?")) {
+                const requestData = {
+                    userId: currentUser.uid,
+                    userName: currentUser.name,
+                    jgId: currentUser.jgId,
+                    status: 'pending',
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+
+                const updates = {};
+                updates[`/monetizationRequests/${currentUser.uid}`] = requestData;
+                updates[`/users/${currentUser.uid}/monetization/status`] = 'pending';
+                
+                db.ref().update(updates).then(() => {
+                    alert("Application submitted successfully! You will be notified of the result.");
+                    renderEligibilityCheck(); // Re-render to show "Pending" status
+                }).catch(err => {
+                    alert("Error: " + err.message);
+                });
+            }
+        };
+
+        async function renderMonetizationDashboard() {
+            const container = document.getElementById('monetization-dashboard');
+            
+            const analyticsRef = db.ref(`monetizationAnalytics/${currentUser.uid}`).orderByKey().limitToLast(7);
+            const snapshot = await analyticsRef.once('value');
+
+            let totalRevenue = 0;
+            let tableRows = '';
+
+            if (snapshot.exists()) {
+                snapshot.forEach(daySnap => {
+                    const dayData = daySnap.val();
+                    const date = daySnap.key;
+                    const clicks = dayData.clicks || 0;
+                    const revenue = dayData.revenue || 0;
+                    totalRevenue += revenue;
+                    tableRows = `<tr><td>${date}</td><td>${clicks}</td><td>$${revenue.toFixed(4)}</td></tr>` + tableRows;
+                });
+            } else {
+                tableRows = `<tr><td colspan="3" style="text-align:center;">No data available yet.</td></tr>`;
+            }
+
+            container.innerHTML = `
+                <div class="dashboard-card">
+                    <div class="dashboard-kpi">
+                        <div class="kpi-title">Total Estimated Revenue</div>
+                        <div class="kpi-value">$${totalRevenue.toFixed(2)}</div>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Last 7 Days Analytics</h2>
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr><th>Date</th><th>Clicks</th><th>Revenue</th></tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
 
 
     </script>

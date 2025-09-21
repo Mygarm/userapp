@@ -1061,74 +1061,6 @@
         }
         #logout-btn svg { fill: white; }
         #logout-btn:hover { background-color: #5a6871; } /* Darker gray on hover */
-        
-        /* --- NEW: Monetization View --- */
-        #monetization-view main {
-            padding: 20px;
-            width: 100%;
-        }
-        .eligibility-card, .dashboard-card {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px var(--wa-shadow);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .eligibility-check-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 16px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--wa-border-color);
-        }
-        .eligibility-check-item:last-child {
-            border-bottom: none;
-        }
-        .eligibility-check-item .status-icon {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .eligibility-check-item .status-icon.completed {
-            color: #388e3c; /* green */
-        }
-        .eligibility-check-item .status-icon.pending {
-            color: #d32f2f; /* red */
-        }
-        #apply-monetization-btn {
-            width: 100%;
-            margin-top: 20px;
-        }
-        .dashboard-kpi {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .dashboard-kpi .kpi-title {
-            font-size: 16px;
-            color: var(--wa-text-secondary);
-        }
-        .dashboard-kpi .kpi-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--wa-header-bg);
-        }
-        .dashboard-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .dashboard-table th, .dashboard-table td {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid var(--wa-border-color);
-        }
-        .dashboard-table th {
-            font-weight: 500;
-            font-size: 14px;
-            color: var(--wa-text-secondary);
-        }
-        .dashboard-table td {
-            font-size: 15px;
-        }
 
     </style>
 </head>
@@ -1358,10 +1290,6 @@
                         <svg viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm8-12v8h8V3h-8zm6 6h-4V5h4v4zm-2 12h-4v-2h2v-2h2v4zM13 13h-2v2h2v-2zm4 0h-2v2h2v-2zm-2 2h-2v2h2v-2zm4 0h-2v2h2v-2zm2-4h-2v2h2v-2zm0-2h-2v2h2v-2zm-2 6h-2v2h2v-2zm-6-4h2v-2h-2v2z"></path></svg>
                         <span>My Profile QR</span>
                     </button>
-                    <button id="monetization-btn" class="text-icon-btn">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.25 14.25L7.5 13l1.41-1.41L10 12.83l4.59-4.59L16 9.66l-5.25 6.59z"></path></svg>
-                        <span>Monetization</span>
-                    </button>
                     <button id="boost-dashboard-btn" class="text-icon-btn">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path></svg>
                         <span>Boost Dashboard</span>
@@ -1391,22 +1319,6 @@
             </main>
         </div>
         
-        <!-- NEW: Monetization View -->
-        <div id="monetization-view" class="view" style="display: none;">
-            <header class="page-header">
-                <button class="back-btn icon-btn">
-                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
-                </button>
-                <span class="page-title">Monetization</span>
-            </header>
-            <main>
-                <!-- This will be populated by JS -->
-                <div id="monetization-eligibility" style="width:100%;"></div>
-                <div id="monetization-dashboard" style="display:none; width:100%;"></div>
-            </main>
-        </div>
-
-
         <!-- Settings View -->
         <div id="settings-view" class="view" style="display: none;">
             <header class="page-header">
@@ -1843,16 +1755,6 @@
         let allUsersCache = []; // Cache for user search
         const notificationSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaW5nIGN1cmV6YUBnbWFpbC5jb20AAAARTGF2ZjU2LjQwLjEwMQAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9');
 
-        // --- NEW: Monetization Config ---
-        const monetizationConfig = {
-            requiredFollowers: 100,
-            requiredReferrals: 0,
-            adLink: "https://www.revenuecpmgate.com/y4q8yr1w?key=a8e5c1b0e8f18850a4534feaed2c8063",
-            cpm: 0.80, // Cost per 1000 clicks in USD
-            get revenuePerClick() { return this.cpm / 1000; }
-        };
-
-
         // --- HARDCODED CONFIGURATION ---
         const hardcodedBadgePackagesConfig = {
             "silver": {
@@ -1897,7 +1799,6 @@
                 if (viewId === 'boost-dashboard-view') renderBoostDashboard();
                 if (viewId === 'notifications-view') renderUnifiedNotifications();
                 if (viewId === 'dm-view') renderDmList();
-                if (viewId === 'monetization-view') renderMonetizationView();
             }
         };
 
@@ -2149,8 +2050,7 @@
                     badgeInfo: { packageType: 'free', expiryTimestamp: 0 },
                     dobChanged: false,
                     genderChanged: false,
-                    referralBonusCredited: false,
-                    monetization: { status: 'none' } // none, pending, active, rejected
+                    referralBonusCredited: false
                 };
 
                 if (referCode) {
@@ -2289,7 +2189,6 @@
         document.getElementById('boost-dashboard-btn').addEventListener('click', () => showView('boost-dashboard-view'));
         document.getElementById('close-add-friend-modal-btn').addEventListener('click', () => showModal('add-friend-modal', false));
         document.getElementById('close-post-image-view-btn').addEventListener('click', () => showModal('post-image-view-modal', false));
-        document.getElementById('monetization-btn').addEventListener('click', () => showView('monetization-view'));
 
 
         // --- QR Code & Scanner ---
@@ -2633,9 +2532,8 @@
 
             const userSnap = await db.ref(`users/${postData.authorUid}`).once('value');
             let authorHasBadge = false;
-            let authorData = null;
             if (userSnap.exists()) {
-                authorData = userSnap.val();
+                const authorData = userSnap.val();
                 authorHasBadge = authorData.badgeInfo && authorData.badgeInfo.expiryTimestamp && authorData.badgeInfo.expiryTimestamp > Date.now();
             }
             
@@ -2648,9 +2546,8 @@
             const time = new Date(postData.timestamp).toLocaleString();
             
             const isMyPost = postData.authorUid === currentUser.uid;
-            const isMonetizedAuthor = authorData && authorData.monetization && authorData.monetization.status === 'active';
             
-            let actionButtons = `<button class="post-action-btn" id="like-btn-${postId}" onclick="handleReaction('${postId}', '${postData.authorUid}', ${isMonetizedAuthor})"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg><span id="like-text-${postId}">Like</span><span id="like-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
+            let actionButtons = `<button class="post-action-btn" id="like-btn-${postId}" onclick="handleReaction('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg><span id="like-text-${postId}">Like</span><span id="like-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
             actionButtons += `<button class="post-action-btn" onclick="toggleComments('${postId}', '${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path></svg><span>Comment</span><span id="comment-count-${postId}" style="margin-left: 4px; font-weight: normal;"></span></button>`;
             if (!isMyPost) {
                 actionButtons += `<button class="post-action-btn" onclick="initiateDmFromPost('${postData.authorUid}')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg><span>Message</span></button>`;
@@ -2737,47 +2634,11 @@
         };
 
         window.reportPost = (postId) => { if(confirm("Report this post?")) alert("Post reported."); };
-        function createNotification(targetUid, type, text, postId) { if (targetUid === currentUser.uid && type !== 'boost_approved' && type !== 'request_rejected' && type !== 'badge_approved' && type !== 'badge_expiring' && type !== 'boost_expiring' && type !== 'welcome_bonus' && type !== 'monetization_approved' && type !== 'monetization_rejected') return; db.ref(`notifications/${targetUid}`).push().set({ fromUserId: currentUser.uid, fromUserName: currentUser.name, fromUserImage: currentUser.profileImageUrl, type: type, text: text, postId: postId, timestamp: firebase.database.ServerValue.TIMESTAMP, read: false }); }
+        function createNotification(targetUid, type, text, postId) { if (targetUid === currentUser.uid && type !== 'boost_approved' && type !== 'request_rejected' && type !== 'badge_approved' && type !== 'badge_expiring' && type !== 'boost_expiring' && type !== 'welcome_bonus') return; db.ref(`notifications/${targetUid}`).push().set({ fromUserId: currentUser.uid, fromUserName: currentUser.name, fromUserImage: currentUser.profileImageUrl, type: type, text: text, postId: postId, timestamp: firebase.database.ServerValue.TIMESTAMP, read: false }); }
         
-        window.handleReaction = (postId, postAuthorUid, isMonetized) => {
+        window.handleReaction = (postId, postAuthorUid) => {
             const reactionRef = db.ref(`posts/${postId}/reactions/like/${currentUser.uid}`);
             
-            // Monetization Click Handling
-            if (isMonetized && postAuthorUid !== currentUser.uid) {
-                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-                const clickRef = db.ref(`monetizationClicks/${postAuthorUid}/${today}/${currentUser.uid}`);
-                
-                clickRef.once('value', snapshot => {
-                    if (!snapshot.exists()) {
-                        window.open(monetizationConfig.adLink, '_blank');
-                        
-                        const updates = {};
-                        // Record the click
-                        updates[`monetizationClicks/${postAuthorUid}/${today}/${currentUser.uid}`] = true;
-                        
-                        // Increment revenue
-                        const revenue = monetizationConfig.revenuePerClick;
-                        updates[`users/${postAuthorUid}/wallet/main`] = firebase.database.ServerValue.increment(revenue);
-                        
-                        // Add transaction history
-                        const txKey = db.ref(`transactionHistory/${postAuthorUid}`).push().key;
-                        updates[`transactionHistory/${postAuthorUid}/${txKey}`] = {
-                            amount: revenue,
-                            reason: `Monetization revenue from like`,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        };
-
-                        // Add to daily analytics
-                        const analyticsRef = db.ref(`monetizationAnalytics/${postAuthorUid}/${today}`);
-                        updates[`monetizationAnalytics/${postAuthorUid}/${today}/clicks`] = firebase.database.ServerValue.increment(1);
-                        updates[`monetizationAnalytics/${postAuthorUid}/${today}/revenue`] = firebase.database.ServerValue.increment(revenue);
-
-                        db.ref().update(updates);
-                    }
-                });
-            }
-
-            // Like/Unlike Handling
             reactionRef.once('value', snapshot => {
                 if (snapshot.exists()) {
                     reactionRef.remove();
@@ -2998,20 +2859,6 @@
                     createNotification(currentUser.uid, 'request_rejected', `Your badge request was rejected. $${request.costUSD.toFixed(2)} refunded.`, null);
                     notificationSound.play().catch(e => {});
                  }
-            });
-            // Monetization Requests
-            db.ref('monetizationRequests').orderByChild('userId').equalTo(currentUser.uid).on('child_changed', (snapshot) => {
-                const request = { id: snapshot.key, ...snapshot.val() };
-                if (request.status === 'approved' && !request.notificationSent) {
-                    createNotification(currentUser.uid, 'monetization_approved', 'Congratulations! Your monetization has been approved.', null);
-                    notificationSound.play().catch(e => {});
-                    db.ref(`monetizationRequests/${request.id}/notificationSent`).set(true);
-                }
-                if (request.status === 'rejected' && !request.notificationSent) {
-                    createNotification(currentUser.uid, 'monetization_rejected', 'Your monetization request has been rejected.', null);
-                    notificationSound.play().catch(e => {});
-                    db.ref(`monetizationRequests/${request.id}/notificationSent`).set(true);
-                }
             });
         }
 
@@ -3514,50 +3361,58 @@
         
         async function renderDmList() {
             const container = document.getElementById('dm-list-container');
-            container.innerHTML = '';
+            container.innerHTML = ''; // Clear previous list
 
             const contacts = currentUser.contacts || {};
             if (Object.keys(contacts).length === 0) {
                 container.innerHTML = '<p style="text-align:center; color: #667781; padding: 40px 20px;">You have no friends yet. Add friends to start chatting.</p>';
                 return;
             }
+            
+            // Detach old listeners if any (simple approach for this context)
+            db.ref(`users/${currentUser.uid}/conversations`).off();
+            Object.keys(contacts).forEach(userId => {
+                db.ref(`users/${userId}`).off();
+                db.ref(`/status/${userId}`).off();
+            });
 
             for (const userId of Object.keys(contacts)) {
-                db.ref(`users/${userId}`).on('value', userSnap => {
-                    if (!userSnap.exists()) return;
-                    const userData = userSnap.val();
-                    
-                    const convId = currentUser.uid < userId ? `${currentUser.uid}_${userId}` : `${userId}_${currentUser.uid}`;
-                    db.ref(`users/${currentUser.uid}/conversations/${convId}`).on('value', convSnap => {
-                        const convData = convSnap.val() || { lastMessage: 'Tap to start chatting' };
-                        
-                        let existingItem = document.getElementById(`dm-item-${userId}`);
-                        if (!existingItem) {
-                            existingItem = document.createElement('div');
-                            existingItem.id = `dm-item-${userId}`;
-                            existingItem.className = 'list-item';
-                            container.appendChild(existingItem);
-                        }
+                const userSnap = await db.ref(`users/${userId}`).once('value');
+                if (!userSnap.exists()) continue;
 
-                        existingItem.onclick = () => openDmChat(userId, userData);
-                        existingItem.innerHTML = `
-                            <div class="list-item-profile-img-container">
-                                <img src="${userData.profileImageUrl}" class="list-item-profile-img">
-                                <div id="dm-list-indicator-${userId}" class="online-indicator"></div>
-                            </div>
-                            <div class="list-item-details">
-                                <div class="list-item-name">${escapeHTML(userData.name)}</div>
-                                <div class="list-item-subtext">${escapeHTML(convData.lastMessage)}</div>
-                            </div>`;
-                        
-                        // Check online status
-                        db.ref(`/status/${userId}`).on('value', statusSnap => {
-                            const statusIndicator = document.getElementById(`dm-list-indicator-${userId}`);
-                            if (statusIndicator) {
-                                statusIndicator.style.display = (statusSnap.exists() && statusSnap.val().state === 'online') ? 'block' : 'none';
-                            }
-                        });
-                    });
+                const userData = userSnap.val();
+                const convId = currentUser.uid < userId ? `${currentUser.uid}_${userId}` : `${userId}_${currentUser.uid}`;
+
+                // Create and append the element to the DOM first
+                const listItem = document.createElement('div');
+                listItem.id = `dm-item-${userId}`;
+                listItem.className = 'list-item';
+                listItem.innerHTML = `
+                    <div class="list-item-profile-img-container">
+                        <img src="${userData.profileImageUrl}" class="list-item-profile-img">
+                        <div id="dm-list-indicator-${userId}" class="online-indicator"></div>
+                    </div>
+                    <div class="list-item-details">
+                        <div class="list-item-name">${escapeHTML(userData.name)}</div>
+                        <div class="list-item-subtext" id="dm-last-msg-${userId}">Tap to start chatting</div>
+                    </div>`;
+                listItem.onclick = () => openDmChat(userId, userData);
+                container.appendChild(listItem);
+
+                // Now, attach listeners to update the existing elements
+                const lastMsgElem = document.getElementById(`dm-last-msg-${userId}`);
+                db.ref(`users/${currentUser.uid}/conversations/${convId}`).on('value', convSnap => {
+                    const convData = convSnap.val();
+                    if (lastMsgElem && convData && convData.lastMessage) {
+                        lastMsgElem.textContent = escapeHTML(convData.lastMessage);
+                    }
+                });
+
+                const statusIndicator = document.getElementById(`dm-list-indicator-${userId}`);
+                db.ref(`/status/${userId}`).on('value', statusSnap => {
+                    if (statusIndicator) {
+                        statusIndicator.style.display = (statusSnap.exists() && statusSnap.val().state === 'online') ? 'block' : 'none';
+                    }
                 });
             }
         }
@@ -3746,128 +3601,6 @@
 
         document.getElementById('dm-chat-send-btn').addEventListener('click', () => sendDmMessage());
         document.getElementById('dm-chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDmMessage(); } });
-
-        // --- NEW: MONETIZATION FUNCTIONS ---
-        async function renderMonetizationView() {
-            const eligibilityContainer = document.getElementById('monetization-eligibility');
-            const dashboardContainer = document.getElementById('monetization-dashboard');
-            
-            const status = currentUser.monetization ? currentUser.monetization.status : 'none';
-
-            if (status === 'active') {
-                eligibilityContainer.style.display = 'none';
-                dashboardContainer.style.display = 'block';
-                renderMonetizationDashboard();
-            } else {
-                eligibilityContainer.style.display = 'block';
-                dashboardContainer.style.display = 'none';
-                renderEligibilityCheck();
-            }
-        }
-
-        async function renderEligibilityCheck() {
-            const container = document.getElementById('monetization-eligibility');
-            const followerCount = Object.keys(currentUser.followers || {}).length;
-            
-            const referralsSnap = await db.ref('users').orderByChild('referredBy').equalTo(currentUser.uid).once('value');
-            const referralCount = referralsSnap.numChildren();
-
-            const hasEnoughFollowers = followerCount >= monetizationConfig.requiredFollowers;
-            const hasEnoughReferrals = referralCount >= monetizationConfig.requiredReferrals;
-            const isEligible = hasEnoughFollowers && hasEnoughReferrals;
-
-            let buttonHtml = '';
-            const monetizationStatus = currentUser.monetization ? currentUser.monetization.status : 'none';
-
-            if (monetizationStatus === 'pending') {
-                buttonHtml = `<button id="apply-monetization-btn" class="text-icon-btn primary" disabled>Application Pending</button>`;
-            } else if (monetizationStatus === 'rejected') {
-                buttonHtml = `<p style="text-align:center; color: #d32f2f; margin-top: 15px;">Your previous application was rejected. Please contact support.</p>`;
-            } else if (isEligible) {
-                buttonHtml = `<button id="apply-monetization-btn" class="text-icon-btn primary" onclick="applyForMonetization()">Apply for Monetization</button>`;
-            }
-
-            container.innerHTML = `
-                <div class="eligibility-card">
-                    <h2>Eligibility Requirements</h2>
-                    <div class="eligibility-check-item">
-                        <span>${monetizationConfig.requiredFollowers} Followers (${followerCount})</span>
-                        <span class="status-icon ${hasEnoughFollowers ? 'completed' : 'pending'}">${hasEnoughFollowers ? '✓' : '✗'}</span>
-                    </div>
-                    <div class="eligibility-check-item">
-                        <span>${monetizationConfig.requiredReferrals} Referrals (${referralCount})</span>
-                        <span class="status-icon ${hasEnoughReferrals ? 'completed' : 'pending'}">${hasEnoughReferrals ? '✓' : '✗'}</span>
-                    </div>
-                    ${buttonHtml}
-                </div>`;
-        }
-        
-        window.applyForMonetization = () => {
-            if(confirm("Are you sure you want to apply for monetization?")) {
-                const requestData = {
-                    userId: currentUser.uid,
-                    userName: currentUser.name,
-                    jgId: currentUser.jgId,
-                    status: 'pending',
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
-
-                const updates = {};
-                updates[`/monetizationRequests/${currentUser.uid}`] = requestData;
-                updates[`/users/${currentUser.uid}/monetization/status`] = 'pending';
-                
-                db.ref().update(updates).then(() => {
-                    alert("Application submitted successfully! You will be notified of the result.");
-                    renderEligibilityCheck(); // Re-render to show "Pending" status
-                }).catch(err => {
-                    alert("Error: " + err.message);
-                });
-            }
-        };
-
-        async function renderMonetizationDashboard() {
-            const container = document.getElementById('monetization-dashboard');
-            
-            const analyticsRef = db.ref(`monetizationAnalytics/${currentUser.uid}`).orderByKey().limitToLast(7);
-            const snapshot = await analyticsRef.once('value');
-
-            let totalRevenue = 0;
-            let tableRows = '';
-
-            if (snapshot.exists()) {
-                snapshot.forEach(daySnap => {
-                    const dayData = daySnap.val();
-                    const date = daySnap.key;
-                    const clicks = dayData.clicks || 0;
-                    const revenue = dayData.revenue || 0;
-                    totalRevenue += revenue;
-                    tableRows = `<tr><td>${date}</td><td>${clicks}</td><td>$${revenue.toFixed(4)}</td></tr>` + tableRows;
-                });
-            } else {
-                tableRows = `<tr><td colspan="3" style="text-align:center;">No data available yet.</td></tr>`;
-            }
-
-            container.innerHTML = `
-                <div class="dashboard-card">
-                    <div class="dashboard-kpi">
-                        <div class="kpi-title">Total Estimated Revenue</div>
-                        <div class="kpi-value">$${totalRevenue.toFixed(2)}</div>
-                    </div>
-                </div>
-                <div class="dashboard-card">
-                    <h2>Last 7 Days Analytics</h2>
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr><th>Date</th><th>Clicks</th><th>Revenue</th></tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-
 
     </script>
 </body>

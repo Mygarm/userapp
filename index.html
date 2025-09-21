@@ -344,6 +344,7 @@
             padding: 15px;
             border-bottom: 8px solid var(--wa-app-bg);
             background-color: #fff;
+            position: relative;
         }
         #post-textarea {
             width: 100%;
@@ -867,6 +868,14 @@
             font-size: 15px;
             position: relative; /* For reactions and menus */
         }
+        /* Style for deleted messages */
+        .message-bubble.deleted {
+            background-color: transparent !important;
+            font-style: italic;
+            color: var(--wa-text-secondary);
+            font-size: 13px;
+            padding: 4px 12px;
+        }
         .message-bubble .message-content-wrapper { position: relative; }
         .message-bubble img.chat-image {
             max-width: 100%;
@@ -880,8 +889,27 @@
             color: var(--wa-text-secondary);
             margin-top: 4px;
             text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
         }
         .message-meta .edited-label { font-style: italic; }
+        .message-seen-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* NEW: Online/Offline status text color */
+        #dm-chat-header-subtext.online {
+            color: #90ee90; /* A light, visible green */
+            font-weight: 500;
+        }
+        #dm-chat-header-subtext.offline {
+            color: rgba(240, 242, 245, 0.7); /* A muted version of icon color */
+        }
         
         .image-container-for-chat {
             position: relative;
@@ -1061,6 +1089,67 @@
         }
         #logout-btn svg { fill: white; }
         #logout-btn:hover { background-color: #5a6871; } /* Darker gray on hover */
+        
+        /* NEW: YouTube Preview Style */
+        .youtube-preview {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--wa-border-color);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--wa-text-primary);
+        }
+        .youtube-preview:hover {
+            background-color: var(--wa-app-bg);
+        }
+        .youtube-preview img {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .youtube-preview-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+        }
+        .youtube-preview-info p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--wa-text-secondary);
+        }
+        
+        /* NEW: Mention Suggestions Box */
+        #mention-suggestions {
+            position: absolute;
+            background-color: white;
+            border: 1px solid var(--wa-border-color);
+            box-shadow: 0 4px 8px var(--wa-shadow);
+            border-radius: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 20;
+            width: 250px;
+            display: none;
+        }
+        .mention-suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+        }
+        .mention-suggestion-item:hover {
+            background-color: var(--wa-app-bg);
+        }
+        .mention-suggestion-item img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
 
     </style>
 </head>
@@ -1165,6 +1254,7 @@
                 
                 <div id="posts-content" class="content-panel active">
                     <div class="create-post-container">
+                        <div id="mention-suggestions"></div>
                         <textarea id="post-textarea" placeholder="What's on your mind?"></textarea>
                         <div id="post-image-preview-container" style="display: none;">
                             <img id="post-image-preview" src="" alt="Image Preview">
@@ -1183,10 +1273,7 @@
                 </div>
                 
                  <div id="watch-content" class="content-panel">
-                    <div style="text-align: center; padding: 50px 20px; color: var(--wa-text-secondary);">
-                        <h2>Watch</h2>
-                        <p>This feature is coming soon!</p>
-                    </div>
+                     <!-- Video posts will be rendered here by JS -->
                 </div>
 
                  <div id="groups-content" class="content-panel">
@@ -1752,6 +1839,7 @@
         let appInitialized = false;
         let boostCostPerDay = 1.00; 
         let postIntersectionObserver;
+        let dmIntersectionObserver;
         let allUsersCache = []; // Cache for user search
         const notificationSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaW5nIGN1cmV6YUBnbWFpbC5jb20AAAARTGF2ZjU2LjQwLjEwMQAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9');
 
@@ -1821,7 +1909,10 @@
             document.getElementById(panelId).classList.add('active');
             document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
             if (panelId === 'posts-content') document.getElementById('nav-posts').classList.add('active'); 
-            if (panelId === 'watch-content') document.getElementById('nav-watch').classList.add('active'); 
+            if (panelId === 'watch-content') {
+                document.getElementById('nav-watch').classList.add('active');
+                renderWatchContent(); // UPDATE: Render watch content on tab click
+            }
             if (panelId === 'groups-content') document.getElementById('nav-groups').classList.add('active'); 
         };
 
@@ -1829,23 +1920,63 @@
         const generateJgId = () => `jg-${Math.floor(1000 + Math.random() * 9000)}`;
         const escapeHTML = (str) => str ? str.replace(/[&<>"']/g, (match) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#39;'}[match])) : '';
         
+        // UPDATE: Modified linkify to handle YouTube previews and fix hashtag clicks
         const linkify = (inputText) => {
+            // Regex for various URL formats
             const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            // Regex for hashtags
             const hashtagRegex = /(#\w+)/g;
+             // Regex for mentions
             const mentionRegex = /(@\w+)/g;
+
+            // First, escape HTML to prevent XSS
+            let processedText = escapeHTML(inputText);
+
+            // Replace URLs with anchor tags
+            processedText = processedText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
             
-            let linkedText = escapeHTML(inputText).replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
-            linkedText = linkedText.replace(hashtagRegex, (hashtag) => `<a href="#" onclick="searchByTag('${hashtag}')" style="color:var(--wa-link-color); text-decoration:none;">${hashtag}</a>`);
+            // Replace hashtags with clickable search links
+            processedText = processedText.replace(hashtagRegex, (hashtag) => `<a href="#" onclick="searchByTag(event, '${hashtag}')" style="color:var(--wa-link-color); text-decoration:none;">${hashtag}</a>`);
             
-            // Link to user profile
-            linkedText = linkedText.replace(/(\s|^)@([a-zA-Z0-9_]+)/g, (match, space, username) => {
-                return `${space}<a href="#" onclick="openProfileByUsername('${username}')" style="color:var(--wa-link-color); text-decoration:none; font-weight: 500;">@${username}</a>`;
+            // Replace mentions with links to user profiles
+            processedText = processedText.replace(mentionRegex, (match, usernameWithAt) => {
+                const username = usernameWithAt.substring(1); // Remove '@'
+                return `<a href="#" onclick="openProfileByUsername(event, '${username}')" style="color:var(--wa-link-color); text-decoration:none; font-weight: 500;">${usernameWithAt}</a>`;
             });
 
-            return linkedText;
+            return processedText;
         };
+        
+        // UPDATE: Function to extract YouTube video ID from various URL formats
+        function getYoutubeVideoId(url) {
+            let videoId = null;
+            const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(youtubeRegex);
+            if (match && match[1]) {
+                videoId = match[1];
+            }
+            return videoId;
+        }
 
-        window.openProfileByUsername = (username) => {
+        // UPDATE: Function to generate a YouTube preview card
+        function generateYoutubePreview(videoId) {
+            if (!videoId) return '';
+            const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+            return `
+                <a href="${videoUrl}" target="_blank" rel="noopener noreferrer" class="youtube-preview">
+                    <img src="${thumbnailUrl}" alt="YouTube Video Thumbnail">
+                    <div class="youtube-preview-info">
+                        <h4>Watch on YouTube</h4>
+                        <p>Click to play this video on the official YouTube site.</p>
+                    </div>
+                </a>`;
+        }
+
+
+        // UPDATE: Functions to handle clicks on mentions and tags, preventing default behavior
+        window.openProfileByUsername = (event, username) => {
+            event.preventDefault(); // Prevent page jump
             db.ref('users').orderByChild('name').equalTo(username).once('value', snapshot => {
                 if (snapshot.exists()) {
                     const userId = Object.keys(snapshot.val())[0];
@@ -1857,7 +1988,8 @@
             });
         };
 
-        window.searchByTag = (tag) => {
+        window.searchByTag = (event, tag) => {
+            event.preventDefault(); // Prevent page jump
             const searchInput = document.getElementById('search-input');
             const searchContainer = document.getElementById('search-container');
             showView('main-view');
@@ -2172,6 +2304,7 @@
             setupSearch();
             setupSettingsListeners();
             setupWalletActionListeners();
+            setupMentionHandler(); // UPDATE: Initialize mention handler
         }
 
         // --- UI NAVIGATION LISTENERS ---
@@ -2420,7 +2553,7 @@
             const historyList = document.getElementById('wallet-history-list');
             historyList.innerHTML = '<p style="text-align: center; padding: 20px;">Loading history...</p>';
             
-            const historyRef = db.ref(`transactionHistory/${currentUser.uid}`).orderByChild('timestamp').limitToLast(5);
+            const historyRef = db.ref(`transactionHistory/${currentUser.uid}`).orderByChild('timestamp').limitToLast(50); // Increased limit
             
             historyRef.once('value', snapshot => {
                 historyList.innerHTML = '';
@@ -2445,6 +2578,7 @@
         document.getElementById('save-profile-changes-btn').addEventListener('click', async () => { const button = document.getElementById('save-profile-changes-btn'); button.disabled = true; button.textContent = "Saving..."; const newName = document.getElementById('edit-profile-name').value.trim(); const imageFile = document.getElementById('edit-profile-image').files[0]; const coverFile = document.getElementById('edit-profile-cover').files[0]; let updates = {}; if (newName) updates.name = newName; if (imageFile) { const newImageUrl = await uploadImage(imageFile); if (newImageUrl) updates.profileImageUrl = newImageUrl; } if (coverFile) { const newCoverUrl = await uploadImage(coverFile); if (newCoverUrl) updates.coverImageUrl = newCoverUrl; } db.ref(`users/${currentUser.uid}`).update(updates).then(() => { alert("Profile updated successfully!"); button.disabled = false; button.textContent = "Save Changes"; openProfileView(); }).catch(err => { alert("Update failed: " + err.message); button.disabled = false; button.textContent = "Save Changes"; }); });
         document.addEventListener('click', () => { 
             document.querySelectorAll('.post-dropdown-menu, .message-menu').forEach(m => m.style.display = 'none'); 
+             document.getElementById('mention-suggestions').style.display = 'none'; // Hide mention box on any click
         });
         
         window.unblockUser = (uidToUnblock) => { db.ref(`users/${currentUser.uid}/blocked/${uidToUnblock}`).remove().then(() => { alert('User unblocked.'); renderBlockedUsers(); }); }
@@ -2469,7 +2603,18 @@
             const text = textArea.value.trim();
             if (!text && !postImageFile) { return alert("Post cannot be empty. Please add text or an image."); }
             postBtn.disabled = true; postBtn.textContent = 'Posting...';
+            
             const postData = { authorUid: currentUser.uid, authorName: currentUser.name, authorProfileImageUrl: currentUser.profileImageUrl, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            
+            // UPDATE: Check for YouTube link on post creation
+            if(text){
+                const videoId = getYoutubeVideoId(text);
+                if(videoId) {
+                    postData.hasVideo = true;
+                    postData.videoId = videoId;
+                }
+            }
+
             try {
                 if (postImageFile) {
                     const imageUrl = await uploadImage(postImageFile);
@@ -2495,20 +2640,7 @@
             postsRef.on('child_added', (snapshot) => {
                 const postData = snapshot.val();
                 if (!postData || (currentUser.blocked && currentUser.blocked[postData.authorUid])) return;
-
-                const thirtyMinutes = 30 * 60 * 1000;
-                const timeSincePost = Date.now() - postData.timestamp;
-                const likeCount = postData.reactions && postData.reactions.like ? Object.keys(postData.reactions.like).length : 0;
-                
-                const isMyPost = postData.authorUid === currentUser.uid;
-                const isFriendOrFollower = (currentUser.contacts && currentUser.contacts[postData.authorUid]) || (currentUser.following && currentUser.following[postData.authorUid]);
-                const isVisibleToMe = isMyPost || isFriendOrFollower;
-                const isPubliclyVisible = timeSincePost < thirtyMinutes || likeCount >= 10;
-                const isBoosted = postData.boostInfo && postData.boostInfo.status === 'active' && postData.boostInfo.endDate > Date.now();
-
-                if (isBoosted || isVisibleToMe || isPubliclyVisible) {
-                    renderSinglePost(snapshot, feed, true);
-                }
+                renderSinglePost(snapshot, feed, true);
             });
 
             postsRef.on('child_changed', (snapshot) => {
@@ -2566,7 +2698,16 @@
 
             let postContentHtml = '';
             if (postData.imageUrl) { postContentHtml += `<img src="${postData.imageUrl}" alt="Post image" class="post-image" onclick="viewPostImage('${postData.imageUrl}')">`; }
-            if (postData.text) { postContentHtml += `<div class="post-text-content" style="${postData.imageUrl ? 'margin-top:10px;' : ''}">${linkify(postData.text)}</div>`; }
+            
+            // UPDATE: Add linked text and YouTube preview
+            if (postData.text) { 
+                let textContent = `<div class="post-text-content" style="${postData.imageUrl ? 'margin-top:10px;' : ''}">${linkify(postData.text)}</div>`;
+                if(postData.videoId) {
+                    textContent += generateYoutubePreview(postData.videoId);
+                }
+                postContentHtml += textContent;
+            }
+            
             postContentHtml += boostButtonHtml; 
 
             const postMenuId = `post-menu-${postId}`;
@@ -3123,8 +3264,27 @@
                 return;
             }
             if (query.startsWith('#')) {
-                resultsContainer.innerHTML = `<p style="text-align:center; color: #667781; padding: 20px;">Hashtag search is a feature in development.</p>`;
+                // UPDATE: Search for posts with the given hashtag
+                resultsContainer.innerHTML = `<p style="text-align:center; color: #667781; padding: 20px;">Searching for posts with ${query}...</p>`;
                 resultsContainer.style.display = 'block';
+
+                const postsRef = db.ref('posts').orderByChild('timestamp').limitToLast(100);
+                const snapshot = await postsRef.once('value');
+                resultsContainer.innerHTML = '';
+                let found = false;
+                if(snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const post = child.val();
+                        if (post.text && post.text.toLowerCase().includes(query)) {
+                            renderSinglePost(child, resultsContainer, false);
+                            found = true;
+                        }
+                    });
+                }
+                if (!found) {
+                     resultsContainer.innerHTML = `<p style="text-align:center; color: #667781; padding: 20px;">No posts found with the tag ${query}.</p>`;
+                }
+
                 return;
             }
 
@@ -3337,21 +3497,23 @@
         }
 
         // --- DIRECT MESSAGING (DM) ---
+        // UPDATE: Modified to count unread conversations for the badge
         function listenForDms() {
             const conversationsRef = db.ref(`users/${currentUser.uid}/conversations`);
             conversationsRef.on('value', (snapshot) => {
-                let unreadCount = 0;
+                let unreadConvoCount = 0;
                 if (snapshot.exists()) {
                     snapshot.forEach(convoSnap => {
                         const convo = convoSnap.val();
                         if (convo.unreadCount && convo.unreadCount > 0) {
-                            unreadCount++;
+                            unreadConvoCount++;
                         }
                     });
                 }
                 const badge = document.getElementById('dm-badge');
-                if (unreadCount > 0) {
-                    badge.textContent = unreadCount;
+                if (unreadConvoCount > 0) {
+                    const displayCount = unreadConvoCount > 99 ? '99+' : unreadConvoCount;
+                    badge.textContent = displayCount;
                     badge.style.display = 'block';
                 } else {
                     badge.style.display = 'none';
@@ -3382,6 +3544,11 @@
 
                 const userData = userSnap.val();
                 const convId = currentUser.uid < userId ? `${currentUser.uid}_${userId}` : `${userId}_${currentUser.uid}`;
+                
+                 // UPDATE: Check for blue badge
+                const userHasBadge = userData.badgeInfo && userData.badgeInfo.expiryTimestamp > Date.now();
+                const badgeIcon = getBlueBadgeIcon(userHasBadge);
+
 
                 // Create and append the element to the DOM first
                 const listItem = document.createElement('div');
@@ -3393,7 +3560,7 @@
                         <div id="dm-list-indicator-${userId}" class="online-indicator"></div>
                     </div>
                     <div class="list-item-details">
-                        <div class="list-item-name">${escapeHTML(userData.name)}</div>
+                        <div class="list-item-name">${escapeHTML(userData.name)} ${badgeIcon}</div>
                         <div class="list-item-subtext" id="dm-last-msg-${userId}">Tap to start chatting</div>
                     </div>`;
                 listItem.onclick = () => openDmChat(userId, userData);
@@ -3405,6 +3572,14 @@
                     const convData = convSnap.val();
                     if (lastMsgElem && convData && convData.lastMessage) {
                         lastMsgElem.textContent = escapeHTML(convData.lastMessage);
+                         // Highlight if unread
+                        if(convData.unreadCount > 0){
+                           lastMsgElem.style.fontWeight = 'bold';
+                           lastMsgElem.style.color = 'var(--wa-text-primary)';
+                        } else {
+                           lastMsgElem.style.fontWeight = 'normal';
+                           lastMsgElem.style.color = 'var(--wa-text-secondary)';
+                        }
                     }
                 });
 
@@ -3421,9 +3596,13 @@
             currentDmPartner = { uid: otherUserId, ...otherUserData };
             const messagesContainer = document.getElementById('dm-chat-messages');
             messagesContainer.innerHTML = '';
-
+            
+            // UPDATE: Add blue badge to chat header
+            const partnerHasBadge = currentDmPartner.badgeInfo && currentDmPartner.badgeInfo.expiryTimestamp > Date.now();
+            const badgeIcon = getBlueBadgeIcon(partnerHasBadge);
+            
             document.getElementById('dm-chat-header-img').src = currentDmPartner.profileImageUrl;
-            document.getElementById('dm-chat-header-name').textContent = currentDmPartner.name;
+            document.getElementById('dm-chat-header-name').innerHTML = `${escapeHTML(currentDmPartner.name)} ${badgeIcon}`;
             
             const statusIndicator = document.getElementById('dm-chat-online-indicator');
             const statusText = document.getElementById('dm-chat-header-subtext');
@@ -3432,9 +3611,11 @@
                 if (statusSnap.exists() && statusSnap.val().state === 'online') {
                     statusIndicator.style.display = 'block';
                     statusText.textContent = 'online';
+                    statusText.className = 'list-item-subtext online'; // UPDATE: Style for online
                 } else {
                     statusIndicator.style.display = 'none';
                     statusText.textContent = 'offline';
+                     statusText.className = 'list-item-subtext offline'; // UPDATE: Style for offline
                 }
             });
 
@@ -3443,18 +3624,54 @@
             const myUid = currentUser.uid;
             const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
             
-            // Mark messages as read
+            // UPDATE: Mark conversation as read upon opening
             db.ref(`users/${myUid}/conversations/${convId}/unreadCount`).set(0);
 
-            db.ref(`direct_messages/${convId}`).limitToLast(50).on('child_added', (snapshot) => {
-                renderDmMessage(snapshot);
+            const messagesRef = db.ref(`direct_messages/${convId}`);
+            
+            messagesRef.limitToLast(50).on('child_added', (snapshot) => {
+                renderDmMessage(snapshot, convId);
+                checkAndMarkAsSeen(snapshot);
             });
-            db.ref(`direct_messages/${convId}`).on('child_changed', (snapshot) => {
-                renderDmMessage(snapshot, true);
+            messagesRef.on('child_changed', (snapshot) => {
+                renderDmMessage(snapshot, convId, true);
             });
+            
+             // Set up seen observer
+            setupDmSeenObserver(convId);
         }
         
-        function renderDmMessage(snapshot, isUpdate = false) {
+        // UPDATE: Observer to mark messages as seen when they scroll into view
+        function setupDmSeenObserver(convId) {
+            if(dmIntersectionObserver) dmIntersectionObserver.disconnect();
+
+            const messagesContainer = document.getElementById('dm-chat-messages');
+            const options = { root: messagesContainer, threshold: 0.8 };
+
+            dmIntersectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const msgElement = entry.target;
+                        const msgId = msgElement.id.replace('msg-', '');
+                        // Mark the message as seen in the DB
+                        db.ref(`direct_messages/${convId}/${msgId}/seenBy/${currentUser.uid}`).set(firebase.database.ServerValue.TIMESTAMP);
+                        observer.unobserve(msgElement);
+                    }
+                });
+            }, options);
+        }
+
+        function checkAndMarkAsSeen(snapshot){
+             const msg = snapshot.val();
+             if(msg.sender !== currentUser.uid && (!msg.seenBy || !msg.seenBy[currentUser.uid])){
+                const msgElement = document.getElementById(`msg-${snapshot.key}`);
+                if(msgElement && dmIntersectionObserver) {
+                    dmIntersectionObserver.observe(msgElement);
+                }
+             }
+        }
+        
+        function renderDmMessage(snapshot, convId, isUpdate = false) {
             const messagesContainer = document.getElementById('dm-chat-messages');
             const msgId = snapshot.key;
             const msg = snapshot.val();
@@ -3466,36 +3683,45 @@
             } else if (!isUpdate) {
                 return;
             }
-
-            const messageClass = msg.sender === currentUser.uid ? 'message-sent' : 'message-received';
+            
+            const isMyMessage = msg.sender === currentUser.uid;
+            const messageClass = isMyMessage ? 'message-sent' : 'message-received';
             div.className = 'message-bubble ' + messageClass;
             
+            // UPDATE: Handle deleted message display
+            if(msg.deleted) {
+                div.classList.add('deleted');
+                div.innerHTML = isMyMessage ? 'You deleted this message' : 'This message was deleted';
+                if (!isUpdate) messagesContainer.appendChild(div);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                return;
+            }
+
             let contentHTML = '';
             if (msg.type === 'image' && msg.imageUrl) {
-                contentHTML += `
-                    <div class="image-container-for-chat">
-                        <img src="${msg.imageUrl}" class="chat-image" onclick="viewPostImage('${msg.imageUrl}')">
-                        <a href="${msg.imageUrl}" download="image.jpg" class="image-download-btn" title="Download Image">
-                            <svg viewBox="0 0 24 24" fill="white" width="18px" height="18px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>
-                        </a>
-                    </div>`;
+                contentHTML += `<div class="image-container-for-chat"><img src="${msg.imageUrl}" class="chat-image" onclick="viewPostImage('${msg.imageUrl}')"><a href="${msg.imageUrl}" download="image.jpg" class="image-download-btn" title="Download Image"><svg viewBox="0 0 24 24" fill="white" width="18px" height="18px"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg></a></div>`;
             }
             if (msg.text) {
                 contentHTML += `<div id="text-${msgId}">${linkify(msg.text)}</div>`;
             }
 
             let menuHTML = '';
-            if(msg.sender === currentUser.uid) {
-                menuHTML = `
-                <div class="message-menu-trigger" onclick="event.stopPropagation(); this.nextElementSibling.style.display = 'block';">...</div>
-                <div class="message-menu">
-                    ${msg.text ? `<button onclick="startEditDmMessage('${msgId}')">Edit</button>` : ''}
-                    <button onclick="deleteDmMessage('${msgId}')">Delete</button>
-                </div>`;
+            if(isMyMessage) {
+                menuHTML = `<div class="message-menu-trigger" onclick="event.stopPropagation(); this.nextElementSibling.style.display = 'block';">...</div><div class="message-menu"><button onclick="deleteDmMessage('${msgId}', '${convId}')">Delete</button></div>`;
             }
             
             const editedLabel = msg.edited ? '<span class="edited-label">(Edited)</span>' : '';
-            div.innerHTML = `<div class="message-content-wrapper">${contentHTML}${menuHTML}</div><div class="message-meta">${editedLabel}</div>`;
+            
+            // UPDATE: Logic for seen indicator
+            let seenIndicatorHTML = '';
+            if (isMyMessage && msg.seenBy && msg.seenBy[currentDmPartner.uid]) {
+                const lastSentMessage = messagesContainer.querySelector('.message-sent:last-of-type');
+                 if(!lastSentMessage || lastSentMessage.id === div.id) {
+                     seenIndicatorHTML = `<img src="${currentDmPartner.profileImageUrl}" class="message-seen-indicator" title="Seen">`;
+                 }
+            }
+            
+            div.innerHTML = `<div class="message-content-wrapper">${contentHTML}${menuHTML}</div><div class="message-meta">${editedLabel} ${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${seenIndicatorHTML}</div>`;
             
             if (!isUpdate) {
                  messagesContainer.appendChild(div);
@@ -3504,33 +3730,21 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        window.startEditDmMessage = (msgId) => {
-            const textDiv = document.getElementById(`text-${msgId}`);
-            const currentText = textDiv.innerText;
-            textDiv.innerHTML = `<textarea id="edit-msg-${msgId}" style="width:100%">${currentText}</textarea><button onclick="saveEditDmMessage('${msgId}')">Save</button><button onclick="cancelEditDmMessage('${msgId}', \`${escapeHTML(currentText)}\`)">Cancel</button>`;
-        };
 
-        window.saveEditDmMessage = (msgId) => {
-            const myUid = currentUser.uid;
-            const otherUserId = currentDmPartner.uid;
-            const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
-            const newText = document.getElementById(`edit-msg-${msgId}`).value;
-            db.ref(`direct_messages/${convId}/${msgId}`).update({ text: newText, edited: true });
-        };
-        
-        window.cancelEditDmMessage = (msgId, originalText) => {
-            document.getElementById(`text-${msgId}`).innerHTML = linkify(originalText);
-        }
-
-        window.deleteDmMessage = (msgId) => {
-            if (confirm("Are you sure you want to delete this message?")) {
-                const myUid = currentUser.uid;
-                const otherUserId = currentDmPartner.uid;
-                const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
-                db.ref(`direct_messages/${convId}/${msgId}`).remove().then(() => {
-                    const msgElement = document.getElementById(`msg-${msgId}`);
-                    if (msgElement) msgElement.remove();
+        // UPDATE: Implemented message deletion with placeholder text
+        window.deleteDmMessage = (msgId, convId) => {
+            if (confirm("Are you sure you want to delete this message for everyone?")) {
+                const messageRef = db.ref(`direct_messages/${convId}/${msgId}`);
+                messageRef.update({
+                    text: null,
+                    imageUrl: null,
+                    type: null,
+                    deleted: true
                 });
+                 // Update last message in conversations
+                const lastMessageText = "Message deleted";
+                db.ref(`users/${currentUser.uid}/conversations/${convId}/lastMessage`).set(lastMessageText);
+                db.ref(`users/${currentDmPartner.uid}/conversations/${convId}/lastMessage`).set(lastMessageText);
             }
         };
 
@@ -3558,7 +3772,7 @@
             const updates = {};
             const newMessageKey = db.ref(`direct_messages/${convId}`).push().key;
             updates[`direct_messages/${convId}/${newMessageKey}`] = messageData;
-            updates[`users/${myUid}/conversations/${convId}`] = { lastMessage: lastMessageText, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            updates[`users/${myUid}/conversations/${convId}`] = { lastMessage: lastMessageText, timestamp: firebase.database.ServerValue.TIMESTAMP, unreadCount: 0 };
             updates[`users/${otherUserId}/conversations/${convId}/lastMessage`] = lastMessageText;
             updates[`users/${otherUserId}/conversations/${convId}/timestamp`] = firebase.database.ServerValue.TIMESTAMP;
             updates[`users/${otherUserId}/conversations/${convId}/unreadCount`] = firebase.database.ServerValue.increment(1);
@@ -3601,6 +3815,93 @@
 
         document.getElementById('dm-chat-send-btn').addEventListener('click', () => sendDmMessage());
         document.getElementById('dm-chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDmMessage(); } });
+        
+        // --- NEW: Watch Section ---
+        function renderWatchContent() {
+            const container = document.getElementById('watch-content');
+            container.innerHTML = '<p style="text-align:center; padding: 20px;">Loading videos...</p>';
+            
+            // Query for posts that have a video flag
+            db.ref('posts').orderByChild('hasVideo').equalTo(true).limitToLast(50).once('value', snapshot => {
+                container.innerHTML = '';
+                if (!snapshot.exists()) {
+                    container.innerHTML = '<p style="text-align:center; color: var(--wa-text-secondary); padding: 50px 20px;">No video posts found.</p>';
+                    return;
+                }
+                
+                let videoPosts = [];
+                snapshot.forEach(child => videoPosts.push(child));
+                videoPosts.reverse(); // Show newest first
+                
+                videoPosts.forEach(postSnapshot => {
+                    renderSinglePost(postSnapshot, container, false);
+                });
+            });
+        }
+        
+        // --- NEW: @Mention Handling ---
+        function setupMentionHandler() {
+            const textarea = document.getElementById('post-textarea');
+            const suggestionsBox = document.getElementById('mention-suggestions');
+
+            textarea.addEventListener('keyup', (e) => {
+                const text = textarea.value;
+                const cursorPos = textarea.selectionStart;
+                
+                const textBeforeCursor = text.substring(0, cursorPos);
+                const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+
+                if (mentionMatch) {
+                    const query = mentionMatch[1].toLowerCase();
+                    showMentionSuggestions(query, suggestionsBox, textarea);
+                } else {
+                    suggestionsBox.style.display = 'none';
+                }
+            });
+        }
+
+        async function showMentionSuggestions(query, box, textarea) {
+            if (allUsersCache.length === 0) { // Populate cache if empty
+                const usersSnap = await db.ref('users').once('value');
+                if (usersSnap.exists()) {
+                    usersSnap.forEach(child => allUsersCache.push({ uid: child.key, ...child.val() }));
+                }
+            }
+            
+            const filteredUsers = allUsersCache.filter(user => user.name.toLowerCase().startsWith(query)).slice(0, 5);
+
+            if (filteredUsers.length > 0) {
+                box.innerHTML = '';
+                filteredUsers.forEach(user => {
+                    const item = document.createElement('div');
+                    item.className = 'mention-suggestion-item';
+                    item.innerHTML = `<img src="${user.profileImageUrl}" alt="${user.name}"><span>${user.name}</span>`;
+                    item.onclick = () => {
+                        insertMention(user.name, textarea);
+                        box.style.display = 'none';
+                    };
+                    box.appendChild(item);
+                });
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+        
+        function insertMention(username, textarea) {
+            const text = textarea.value;
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = text.substring(0, cursorPos);
+            const textAfterCursor = text.substring(cursorPos);
+
+            const lastAt = textBeforeCursor.lastIndexOf('@');
+            const newTextBefore = textBeforeCursor.substring(0, lastAt);
+
+            textarea.value = newTextBefore + `@${username} ` + textAfterCursor;
+            textarea.focus();
+            const newCursorPos = newTextBefore.length + username.length + 2;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }
 
     </script>
 </body>

@@ -344,7 +344,6 @@
             padding: 15px;
             border-bottom: 8px solid var(--wa-app-bg);
             background-color: #fff;
-            position: relative;
         }
         #post-textarea {
             width: 100%;
@@ -651,6 +650,27 @@
             width: auto;
             margin-top: 10px;
         }
+        
+        /* NEW: Video Player Style */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
 
         /* --- Badge Request View Styles --- */
         #badge-request-view main {
@@ -868,7 +888,6 @@
             font-size: 15px;
             position: relative; /* For reactions and menus */
         }
-        /* Style for deleted messages */
         .message-bubble.deleted {
             background-color: transparent !important;
             font-style: italic;
@@ -901,8 +920,6 @@
             border-radius: 50%;
             object-fit: cover;
         }
-
-        /* NEW: Online/Offline status text color */
         #dm-chat-header-subtext.online {
             color: #90ee90; /* A light, visible green */
             font-weight: 500;
@@ -1089,67 +1106,6 @@
         }
         #logout-btn svg { fill: white; }
         #logout-btn:hover { background-color: #5a6871; } /* Darker gray on hover */
-        
-        /* NEW: YouTube Preview Style */
-        .youtube-preview {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--wa-border-color);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--wa-text-primary);
-        }
-        .youtube-preview:hover {
-            background-color: var(--wa-app-bg);
-        }
-        .youtube-preview img {
-            width: 120px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0;
-        }
-        .youtube-preview-info h4 {
-            margin: 0 0 5px 0;
-            font-size: 15px;
-        }
-        .youtube-preview-info p {
-            margin: 0;
-            font-size: 13px;
-            color: var(--wa-text-secondary);
-        }
-        
-        /* NEW: Mention Suggestions Box */
-        #mention-suggestions {
-            position: absolute;
-            background-color: white;
-            border: 1px solid var(--wa-border-color);
-            box-shadow: 0 4px 8px var(--wa-shadow);
-            border-radius: 8px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 20;
-            width: 250px;
-            display: none;
-        }
-        .mention-suggestion-item {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            cursor: pointer;
-        }
-        .mention-suggestion-item:hover {
-            background-color: var(--wa-app-bg);
-        }
-        .mention-suggestion-item img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
 
     </style>
 </head>
@@ -1220,6 +1176,9 @@
                          <button id="search-user-btn" class="icon-btn" title="Search Users">
                             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
                         </button>
+                        <button id="add-video-btn" class="icon-btn" title="Add Video">
+                            <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                        </button>
                          <button id="notification-btn" class="icon-btn" title="Notifications">
                             <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"></path></svg>
                             <span id="notification-badge" class="badge"></span>
@@ -1254,7 +1213,6 @@
                 
                 <div id="posts-content" class="content-panel active">
                     <div class="create-post-container">
-                        <div id="mention-suggestions"></div>
                         <textarea id="post-textarea" placeholder="What's on your mind?"></textarea>
                         <div id="post-image-preview-container" style="display: none;">
                             <img id="post-image-preview" src="" alt="Image Preview">
@@ -1739,6 +1697,19 @@
                 </div>
             </div>
         </div>
+        
+        <div id="add-video-modal" class="modal">
+            <div class="modal-content">
+                <h2>Post a Video</h2>
+                <p class="info-text" style="margin-bottom: 10px;">Enter a title and your Google Drive video's download ID.</p>
+                <input type="text" id="video-title-input" placeholder="Video Title" required>
+                <input type="text" id="gdrive-id-input" placeholder="Google Drive Download ID" required>
+                <div class="modal-actions">
+                    <button id="close-add-video-modal-btn" class="secondary">Cancel</button>
+                    <button id="submit-video-post-btn">Post Video</button>
+                </div>
+            </div>
+        </div>
 
         <div id="change-password-modal" class="modal">
             <div class="modal-content">
@@ -1911,7 +1882,7 @@
             if (panelId === 'posts-content') document.getElementById('nav-posts').classList.add('active'); 
             if (panelId === 'watch-content') {
                 document.getElementById('nav-watch').classList.add('active');
-                renderWatchContent(); // UPDATE: Render watch content on tab click
+                renderWatchContent();
             }
             if (panelId === 'groups-content') document.getElementById('nav-groups').classList.add('active'); 
         };
@@ -1920,63 +1891,22 @@
         const generateJgId = () => `jg-${Math.floor(1000 + Math.random() * 9000)}`;
         const escapeHTML = (str) => str ? str.replace(/[&<>"']/g, (match) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#39;'}[match])) : '';
         
-        // UPDATE: Modified linkify to handle YouTube previews and fix hashtag clicks
         const linkify = (inputText) => {
-            // Regex for various URL formats
             const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-            // Regex for hashtags
             const hashtagRegex = /(#\w+)/g;
-             // Regex for mentions
             const mentionRegex = /(@\w+)/g;
-
-            // First, escape HTML to prevent XSS
             let processedText = escapeHTML(inputText);
-
-            // Replace URLs with anchor tags
             processedText = processedText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
-            
-            // Replace hashtags with clickable search links
             processedText = processedText.replace(hashtagRegex, (hashtag) => `<a href="#" onclick="searchByTag(event, '${hashtag}')" style="color:var(--wa-link-color); text-decoration:none;">${hashtag}</a>`);
-            
-            // Replace mentions with links to user profiles
             processedText = processedText.replace(mentionRegex, (match, usernameWithAt) => {
-                const username = usernameWithAt.substring(1); // Remove '@'
+                const username = usernameWithAt.substring(1); 
                 return `<a href="#" onclick="openProfileByUsername(event, '${username}')" style="color:var(--wa-link-color); text-decoration:none; font-weight: 500;">${usernameWithAt}</a>`;
             });
-
             return processedText;
         };
-        
-        // UPDATE: Function to extract YouTube video ID from various URL formats
-        function getYoutubeVideoId(url) {
-            let videoId = null;
-            const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-            const match = url.match(youtubeRegex);
-            if (match && match[1]) {
-                videoId = match[1];
-            }
-            return videoId;
-        }
 
-        // UPDATE: Function to generate a YouTube preview card
-        function generateYoutubePreview(videoId) {
-            if (!videoId) return '';
-            const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-            const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
-            return `
-                <a href="${videoUrl}" target="_blank" rel="noopener noreferrer" class="youtube-preview">
-                    <img src="${thumbnailUrl}" alt="YouTube Video Thumbnail">
-                    <div class="youtube-preview-info">
-                        <h4>Watch on YouTube</h4>
-                        <p>Click to play this video on the official YouTube site.</p>
-                    </div>
-                </a>`;
-        }
-
-
-        // UPDATE: Functions to handle clicks on mentions and tags, preventing default behavior
         window.openProfileByUsername = (event, username) => {
-            event.preventDefault(); // Prevent page jump
+            event.preventDefault(); 
             db.ref('users').orderByChild('name').equalTo(username).once('value', snapshot => {
                 if (snapshot.exists()) {
                     const userId = Object.keys(snapshot.val())[0];
@@ -1989,7 +1919,7 @@
         };
 
         window.searchByTag = (event, tag) => {
-            event.preventDefault(); // Prevent page jump
+            event.preventDefault(); 
             const searchInput = document.getElementById('search-input');
             const searchContainer = document.getElementById('search-container');
             showView('main-view');
@@ -2304,7 +2234,7 @@
             setupSearch();
             setupSettingsListeners();
             setupWalletActionListeners();
-            setupMentionHandler(); // UPDATE: Initialize mention handler
+            setupVideoModal();
         }
 
         // --- UI NAVIGATION LISTENERS ---
@@ -2553,7 +2483,7 @@
             const historyList = document.getElementById('wallet-history-list');
             historyList.innerHTML = '<p style="text-align: center; padding: 20px;">Loading history...</p>';
             
-            const historyRef = db.ref(`transactionHistory/${currentUser.uid}`).orderByChild('timestamp').limitToLast(50); // Increased limit
+            const historyRef = db.ref(`transactionHistory/${currentUser.uid}`).orderByChild('timestamp').limitToLast(50);
             
             historyRef.once('value', snapshot => {
                 historyList.innerHTML = '';
@@ -2578,7 +2508,6 @@
         document.getElementById('save-profile-changes-btn').addEventListener('click', async () => { const button = document.getElementById('save-profile-changes-btn'); button.disabled = true; button.textContent = "Saving..."; const newName = document.getElementById('edit-profile-name').value.trim(); const imageFile = document.getElementById('edit-profile-image').files[0]; const coverFile = document.getElementById('edit-profile-cover').files[0]; let updates = {}; if (newName) updates.name = newName; if (imageFile) { const newImageUrl = await uploadImage(imageFile); if (newImageUrl) updates.profileImageUrl = newImageUrl; } if (coverFile) { const newCoverUrl = await uploadImage(coverFile); if (newCoverUrl) updates.coverImageUrl = newCoverUrl; } db.ref(`users/${currentUser.uid}`).update(updates).then(() => { alert("Profile updated successfully!"); button.disabled = false; button.textContent = "Save Changes"; openProfileView(); }).catch(err => { alert("Update failed: " + err.message); button.disabled = false; button.textContent = "Save Changes"; }); });
         document.addEventListener('click', () => { 
             document.querySelectorAll('.post-dropdown-menu, .message-menu').forEach(m => m.style.display = 'none'); 
-             document.getElementById('mention-suggestions').style.display = 'none'; // Hide mention box on any click
         });
         
         window.unblockUser = (uidToUnblock) => { db.ref(`users/${currentUser.uid}/blocked/${uidToUnblock}`).remove().then(() => { alert('User unblocked.'); renderBlockedUsers(); }); }
@@ -2603,18 +2532,7 @@
             const text = textArea.value.trim();
             if (!text && !postImageFile) { return alert("Post cannot be empty. Please add text or an image."); }
             postBtn.disabled = true; postBtn.textContent = 'Posting...';
-            
             const postData = { authorUid: currentUser.uid, authorName: currentUser.name, authorProfileImageUrl: currentUser.profileImageUrl, timestamp: firebase.database.ServerValue.TIMESTAMP };
-            
-            // UPDATE: Check for YouTube link on post creation
-            if(text){
-                const videoId = getYoutubeVideoId(text);
-                if(videoId) {
-                    postData.hasVideo = true;
-                    postData.videoId = videoId;
-                }
-            }
-
             try {
                 if (postImageFile) {
                     const imageUrl = await uploadImage(postImageFile);
@@ -2699,21 +2617,21 @@
             let postContentHtml = '';
             if (postData.imageUrl) { postContentHtml += `<img src="${postData.imageUrl}" alt="Post image" class="post-image" onclick="viewPostImage('${postData.imageUrl}')">`; }
             
-            // UPDATE: Add linked text and YouTube preview
             if (postData.text) { 
-                let textContent = `<div class="post-text-content" style="${postData.imageUrl ? 'margin-top:10px;' : ''}">${linkify(postData.text)}</div>`;
-                if(postData.videoId) {
-                    textContent += generateYoutubePreview(postData.videoId);
-                }
-                postContentHtml += textContent;
+                postContentHtml += `<div class="post-text-content" style="${postData.imageUrl ? 'margin-top:10px;' : ''}">${linkify(postData.text)}</div>`;
             }
             
+            if (postData.hasVideo && postData.googleDriveId) {
+                const embedUrl = `https://drive.google.com/file/d/${postData.googleDriveId}/preview`;
+                postContentHtml += `<div class="video-container"><iframe src="${embedUrl}" allow="fullscreen"></iframe></div>`;
+            }
+
             postContentHtml += boostButtonHtml; 
 
             const postMenuId = `post-menu-${postId}`;
             const postMenu = `<div style="position: relative;"><button class="icon-btn post-menu-btn" onclick="togglePostMenu(event, '${postMenuId}')"><svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button><div id="${postMenuId}" class="post-dropdown-menu">${isMyPost ? `<button onclick="openEditModal('${postId}')">Edit Post</button>` : ''}${postData.imageUrl ? `<button onclick="savePostImage('${postData.imageUrl}')">Save Image</button>` : ''}<button onclick="sharePost('${postId}')">Share</button>${isMyPost ? `<button style="color: #d93025;" onclick="deletePost('${postId}')">Delete Post</button>` : `<button onclick="reportPost('${postId}', '${postData.authorUid}')">Report</button>`}</div></div>`;
             
-            postCard.innerHTML = `<div class="post-header"><img src="${postData.authorProfileImageUrl}" alt="${postData.authorName}" class="post-author-img" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')"><div class="post-author-info"><div class="name" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')">${escapeHTML(postData.authorName)} ${getBlueBadgeIcon(authorHasBadge)}</div>${sponsoredLabelHtml}<div class="timestamp">${time}</div></div>${postMenu}</div><div class="post-content">${postContentHtml}</div><div class="post-actions">${actionButtons}</div>`;
+            postCard.innerHTML = `<div class="post-header"><img src="${postData.authorProfileImageUrl}" alt="${postData.authorName}" class="post-author-img" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')"><div class="post-author-info"><div class="name" onclick="showView('user-profile-view'); openUserProfileView('${postData.authorUid}')">${escapeHTML(postData.authorName)} ${authorHasBadge ? getBlueBadgeIcon(true) : ''}</div>${sponsoredLabelHtml}<div class="timestamp">${time}</div></div>${postMenu}</div><div class="post-content">${postContentHtml}</div><div class="post-actions">${actionButtons}</div>`;
             const commentsSection = document.createElement('div');
             commentsSection.className = 'post-comments-section';
             commentsSection.id = `comments-for-${postId}`;
@@ -2837,6 +2755,10 @@
                     const time = new Date(post.timestamp).toLocaleString(); 
                     let content = post.text ? `<div class="post-content">${linkify(post.text)}</div>` : ''; 
                     if (post.imageUrl) content += `<img src="${post.imageUrl}" class="post-image" onclick="viewPostImage('${post.imageUrl}')">`; 
+                    if (post.hasVideo && post.googleDriveId) {
+                        const embedUrl = `https://drive.google.com/file/d/${post.googleDriveId}/preview`;
+                        content += `<div class="video-container"><iframe src="${embedUrl}" allow="fullscreen"></iframe></div>`;
+                    }
                     postDiv.innerHTML = `<div class="post-header"><img src="${post.authorProfileImageUrl}" class="list-item-profile-img" style="width:40px;height:40px;"><div class="post-author-info"><div class="name">${escapeHTML(post.authorName)}</div><div class="timestamp">${time}</div></div><div class="post-controls"><span class="edit-post-btn post-control-btn" onclick="openEditModal('${post.id}')">Edit</span><span class="delete-post-btn post-control-btn" onclick="deletePost('${post.id}')">Delete</span></div></div>${content}`; 
                     list.appendChild(postDiv); 
                 }); 
@@ -3264,7 +3186,6 @@
                 return;
             }
             if (query.startsWith('#')) {
-                // UPDATE: Search for posts with the given hashtag
                 resultsContainer.innerHTML = `<p style="text-align:center; color: #667781; padding: 20px;">Searching for posts with ${query}...</p>`;
                 resultsContainer.style.display = 'block';
 
@@ -3284,7 +3205,6 @@
                 if (!found) {
                      resultsContainer.innerHTML = `<p style="text-align:center; color: #667781; padding: 20px;">No posts found with the tag ${query}.</p>`;
                 }
-
                 return;
             }
 
@@ -3497,7 +3417,6 @@
         }
 
         // --- DIRECT MESSAGING (DM) ---
-        // UPDATE: Modified to count unread conversations for the badge
         function listenForDms() {
             const conversationsRef = db.ref(`users/${currentUser.uid}/conversations`);
             conversationsRef.on('value', (snapshot) => {
@@ -3523,7 +3442,7 @@
         
         async function renderDmList() {
             const container = document.getElementById('dm-list-container');
-            container.innerHTML = ''; // Clear previous list
+            container.innerHTML = ''; 
 
             const contacts = currentUser.contacts || {};
             if (Object.keys(contacts).length === 0) {
@@ -3531,7 +3450,6 @@
                 return;
             }
             
-            // Detach old listeners if any (simple approach for this context)
             db.ref(`users/${currentUser.uid}/conversations`).off();
             Object.keys(contacts).forEach(userId => {
                 db.ref(`users/${userId}`).off();
@@ -3545,12 +3463,9 @@
                 const userData = userSnap.val();
                 const convId = currentUser.uid < userId ? `${currentUser.uid}_${userId}` : `${userId}_${currentUser.uid}`;
                 
-                 // UPDATE: Check for blue badge
                 const userHasBadge = userData.badgeInfo && userData.badgeInfo.expiryTimestamp > Date.now();
                 const badgeIcon = getBlueBadgeIcon(userHasBadge);
 
-
-                // Create and append the element to the DOM first
                 const listItem = document.createElement('div');
                 listItem.id = `dm-item-${userId}`;
                 listItem.className = 'list-item';
@@ -3566,13 +3481,11 @@
                 listItem.onclick = () => openDmChat(userId, userData);
                 container.appendChild(listItem);
 
-                // Now, attach listeners to update the existing elements
                 const lastMsgElem = document.getElementById(`dm-last-msg-${userId}`);
                 db.ref(`users/${currentUser.uid}/conversations/${convId}`).on('value', convSnap => {
                     const convData = convSnap.val();
                     if (lastMsgElem && convData && convData.lastMessage) {
                         lastMsgElem.textContent = escapeHTML(convData.lastMessage);
-                         // Highlight if unread
                         if(convData.unreadCount > 0){
                            lastMsgElem.style.fontWeight = 'bold';
                            lastMsgElem.style.color = 'var(--wa-text-primary)';
@@ -3597,7 +3510,6 @@
             const messagesContainer = document.getElementById('dm-chat-messages');
             messagesContainer.innerHTML = '';
             
-            // UPDATE: Add blue badge to chat header
             const partnerHasBadge = currentDmPartner.badgeInfo && currentDmPartner.badgeInfo.expiryTimestamp > Date.now();
             const badgeIcon = getBlueBadgeIcon(partnerHasBadge);
             
@@ -3611,11 +3523,11 @@
                 if (statusSnap.exists() && statusSnap.val().state === 'online') {
                     statusIndicator.style.display = 'block';
                     statusText.textContent = 'online';
-                    statusText.className = 'list-item-subtext online'; // UPDATE: Style for online
+                    statusText.className = 'list-item-subtext online';
                 } else {
                     statusIndicator.style.display = 'none';
                     statusText.textContent = 'offline';
-                     statusText.className = 'list-item-subtext offline'; // UPDATE: Style for offline
+                     statusText.className = 'list-item-subtext offline';
                 }
             });
 
@@ -3624,51 +3536,30 @@
             const myUid = currentUser.uid;
             const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
             
-            // UPDATE: Mark conversation as read upon opening
             db.ref(`users/${myUid}/conversations/${convId}/unreadCount`).set(0);
 
             const messagesRef = db.ref(`direct_messages/${convId}`);
             
             messagesRef.limitToLast(50).on('child_added', (snapshot) => {
                 renderDmMessage(snapshot, convId);
-                checkAndMarkAsSeen(snapshot);
             });
             messagesRef.on('child_changed', (snapshot) => {
                 renderDmMessage(snapshot, convId, true);
             });
             
-             // Set up seen observer
-            setupDmSeenObserver(convId);
-        }
-        
-        // UPDATE: Observer to mark messages as seen when they scroll into view
-        function setupDmSeenObserver(convId) {
-            if(dmIntersectionObserver) dmIntersectionObserver.disconnect();
-
-            const messagesContainer = document.getElementById('dm-chat-messages');
-            const options = { root: messagesContainer, threshold: 0.8 };
-
-            dmIntersectionObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const msgElement = entry.target;
-                        const msgId = msgElement.id.replace('msg-', '');
-                        // Mark the message as seen in the DB
-                        db.ref(`direct_messages/${convId}/${msgId}/seenBy/${currentUser.uid}`).set(firebase.database.ServerValue.TIMESTAMP);
-                        observer.unobserve(msgElement);
+            // Mark all previous unread messages as seen upon opening chat
+            const unreadMessagesQuery = messagesRef.orderByChild('sender').equalTo(otherUserId);
+            unreadMessagesQuery.once('value', snapshot => {
+                const updates = {};
+                snapshot.forEach(child => {
+                    if (!child.val().seenBy || !child.val().seenBy[myUid]) {
+                        updates[`/direct_messages/${convId}/${child.key}/seenBy/${myUid}`] = firebase.database.ServerValue.TIMESTAMP;
                     }
                 });
-            }, options);
-        }
-
-        function checkAndMarkAsSeen(snapshot){
-             const msg = snapshot.val();
-             if(msg.sender !== currentUser.uid && (!msg.seenBy || !msg.seenBy[currentUser.uid])){
-                const msgElement = document.getElementById(`msg-${snapshot.key}`);
-                if(msgElement && dmIntersectionObserver) {
-                    dmIntersectionObserver.observe(msgElement);
+                if(Object.keys(updates).length > 0) {
+                    db.ref().update(updates);
                 }
-             }
+            });
         }
         
         function renderDmMessage(snapshot, convId, isUpdate = false) {
@@ -3688,11 +3579,10 @@
             const messageClass = isMyMessage ? 'message-sent' : 'message-received';
             div.className = 'message-bubble ' + messageClass;
             
-            // UPDATE: Handle deleted message display
             if(msg.deleted) {
                 div.classList.add('deleted');
                 div.innerHTML = isMyMessage ? 'You deleted this message' : 'This message was deleted';
-                if (!isUpdate) messagesContainer.appendChild(div);
+                 if (!isUpdate || !messagesContainer.contains(div)) messagesContainer.appendChild(div);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 return;
             }
@@ -3707,31 +3597,43 @@
 
             let menuHTML = '';
             if(isMyMessage) {
-                menuHTML = `<div class="message-menu-trigger" onclick="event.stopPropagation(); this.nextElementSibling.style.display = 'block';">...</div><div class="message-menu"><button onclick="deleteDmMessage('${msgId}', '${convId}')">Delete</button></div>`;
+                menuHTML = `<div class="message-menu-trigger" onclick="event.stopPropagation(); this.nextElementSibling.style.display = 'block';">...</div><div class="message-menu">${msg.text ? `<button onclick="startEditDmMessage('${msgId}')">Edit</button>` : ''}<button onclick="deleteDmMessage('${msgId}', '${convId}')">Delete</button></div>`;
             }
             
             const editedLabel = msg.edited ? '<span class="edited-label">(Edited)</span>' : '';
             
-            // UPDATE: Logic for seen indicator
             let seenIndicatorHTML = '';
             if (isMyMessage && msg.seenBy && msg.seenBy[currentDmPartner.uid]) {
-                const lastSentMessage = messagesContainer.querySelector('.message-sent:last-of-type');
-                 if(!lastSentMessage || lastSentMessage.id === div.id) {
-                     seenIndicatorHTML = `<img src="${currentDmPartner.profileImageUrl}" class="message-seen-indicator" title="Seen">`;
-                 }
+                seenIndicatorHTML = `<img src="${currentDmPartner.profileImageUrl}" class="message-seen-indicator" title="Seen">`;
             }
             
             div.innerHTML = `<div class="message-content-wrapper">${contentHTML}${menuHTML}</div><div class="message-meta">${editedLabel} ${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${seenIndicatorHTML}</div>`;
             
-            if (!isUpdate) {
+            if (!isUpdate || !messagesContainer.contains(div)) {
                  messagesContainer.appendChild(div);
             }
            
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        window.startEditDmMessage = (msgId) => {
+            const textDiv = document.getElementById(`text-${msgId}`);
+            const currentText = textDiv.innerText;
+            textDiv.innerHTML = `<textarea id="edit-msg-${msgId}" style="width:100%; min-height: 50px;">${currentText}</textarea><button onclick="saveEditDmMessage('${msgId}')">Save</button><button onclick="cancelEditDmMessage('${msgId}', \`${escapeHTML(currentText).replace(/`/g, "\\`")}\`)">Cancel</button>`;
+        };
 
-        // UPDATE: Implemented message deletion with placeholder text
+        window.saveEditDmMessage = (msgId) => {
+            const myUid = currentUser.uid;
+            const otherUserId = currentDmPartner.uid;
+            const convId = myUid < otherUserId ? `${myUid}_${otherUserId}` : `${otherUserId}_${myUid}`;
+            const newText = document.getElementById(`edit-msg-${msgId}`).value;
+            db.ref(`direct_messages/${convId}/${msgId}`).update({ text: newText, edited: true });
+        };
+        
+        window.cancelEditDmMessage = (msgId, originalText) => {
+            document.getElementById(`text-${msgId}`).innerHTML = linkify(originalText);
+        }
+
         window.deleteDmMessage = (msgId, convId) => {
             if (confirm("Are you sure you want to delete this message for everyone?")) {
                 const messageRef = db.ref(`direct_messages/${convId}/${msgId}`);
@@ -3741,7 +3643,6 @@
                     type: null,
                     deleted: true
                 });
-                 // Update last message in conversations
                 const lastMessageText = "Message deleted";
                 db.ref(`users/${currentUser.uid}/conversations/${convId}/lastMessage`).set(lastMessageText);
                 db.ref(`users/${currentDmPartner.uid}/conversations/${convId}/lastMessage`).set(lastMessageText);
@@ -3816,12 +3717,11 @@
         document.getElementById('dm-chat-send-btn').addEventListener('click', () => sendDmMessage());
         document.getElementById('dm-chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDmMessage(); } });
         
-        // --- NEW: Watch Section ---
+        // --- Watch Section & Video Modal ---
         function renderWatchContent() {
             const container = document.getElementById('watch-content');
             container.innerHTML = '<p style="text-align:center; padding: 20px;">Loading videos...</p>';
             
-            // Query for posts that have a video flag
             db.ref('posts').orderByChild('hasVideo').equalTo(true).limitToLast(50).once('value', snapshot => {
                 container.innerHTML = '';
                 if (!snapshot.exists()) {
@@ -3831,7 +3731,7 @@
                 
                 let videoPosts = [];
                 snapshot.forEach(child => videoPosts.push(child));
-                videoPosts.reverse(); // Show newest first
+                videoPosts.reverse(); 
                 
                 videoPosts.forEach(postSnapshot => {
                     renderSinglePost(postSnapshot, container, false);
@@ -3839,69 +3739,40 @@
             });
         }
         
-        // --- NEW: @Mention Handling ---
-        function setupMentionHandler() {
-            const textarea = document.getElementById('post-textarea');
-            const suggestionsBox = document.getElementById('mention-suggestions');
+        function setupVideoModal() {
+            document.getElementById('add-video-btn').addEventListener('click', () => showModal('add-video-modal'));
+            document.getElementById('close-add-video-modal-btn').addEventListener('click', () => showModal('add-video-modal', false));
+            document.getElementById('submit-video-post-btn').addEventListener('click', async () => {
+                const title = document.getElementById('video-title-input').value.trim();
+                const gdriveId = document.getElementById('gdrive-id-input').value.trim();
 
-            textarea.addEventListener('keyup', (e) => {
-                const text = textarea.value;
-                const cursorPos = textarea.selectionStart;
-                
-                const textBeforeCursor = text.substring(0, cursorPos);
-                const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+                if(!title || !gdriveId) {
+                    alert('Please provide both a title and a Google Drive ID.');
+                    return;
+                }
 
-                if (mentionMatch) {
-                    const query = mentionMatch[1].toLowerCase();
-                    showMentionSuggestions(query, suggestionsBox, textarea);
-                } else {
-                    suggestionsBox.style.display = 'none';
+                const postData = {
+                    authorUid: currentUser.uid,
+                    authorName: currentUser.name,
+                    authorProfileImageUrl: currentUser.profileImageUrl,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    text: title,
+                    hasVideo: true,
+                    googleDriveId: gdriveId
+                };
+
+                try {
+                    await db.ref('posts').push(postData);
+                    alert('Video posted successfully!');
+                    showModal('add-video-modal', false);
+                    document.getElementById('video-title-input').value = '';
+                    document.getElementById('gdrive-id-input').value = '';
+                } catch(err) {
+                    alert('Failed to post video. ' + err.message);
                 }
             });
         }
 
-        async function showMentionSuggestions(query, box, textarea) {
-            if (allUsersCache.length === 0) { // Populate cache if empty
-                const usersSnap = await db.ref('users').once('value');
-                if (usersSnap.exists()) {
-                    usersSnap.forEach(child => allUsersCache.push({ uid: child.key, ...child.val() }));
-                }
-            }
-            
-            const filteredUsers = allUsersCache.filter(user => user.name.toLowerCase().startsWith(query)).slice(0, 5);
-
-            if (filteredUsers.length > 0) {
-                box.innerHTML = '';
-                filteredUsers.forEach(user => {
-                    const item = document.createElement('div');
-                    item.className = 'mention-suggestion-item';
-                    item.innerHTML = `<img src="${user.profileImageUrl}" alt="${user.name}"><span>${user.name}</span>`;
-                    item.onclick = () => {
-                        insertMention(user.name, textarea);
-                        box.style.display = 'none';
-                    };
-                    box.appendChild(item);
-                });
-                box.style.display = 'block';
-            } else {
-                box.style.display = 'none';
-            }
-        }
-        
-        function insertMention(username, textarea) {
-            const text = textarea.value;
-            const cursorPos = textarea.selectionStart;
-            const textBeforeCursor = text.substring(0, cursorPos);
-            const textAfterCursor = text.substring(cursorPos);
-
-            const lastAt = textBeforeCursor.lastIndexOf('@');
-            const newTextBefore = textBeforeCursor.substring(0, lastAt);
-
-            textarea.value = newTextBefore + `@${username} ` + textAfterCursor;
-            textarea.focus();
-            const newCursorPos = newTextBefore.length + username.length + 2;
-            textarea.setSelectionRange(newCursorPos, newCursorPos);
-        }
 
     </script>
 </body>

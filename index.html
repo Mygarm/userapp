@@ -221,6 +221,7 @@
         .nav-tab.active svg { fill: var(--wa-active-tab-indicator); }
         .nav-tab svg { width: 28px; height: 28px; fill: rgba(255, 255, 255, 0.7); transition: fill 0.2s; }
         .badge { position: absolute; top: -2px; right: -4px; background-color: #d93025; color: white; border-radius: 10px; font-size: 11px; padding: 2px 6px; font-weight: 500; display: none; border: 1px solid var(--wa-header-bg); }
+
         #main-content { width: 100%; flex-grow: 1; overflow-y: auto; background-color: #fff; position:relative; }
         .content-panel { display: none; }
         .content-panel.active { display: block; }
@@ -339,7 +340,7 @@
         #qr-reader { width: 100%; max-width: 500px; }
 
         /* --- Post Styles --- */
-        #posts-content { padding: 0; }
+        #posts-content { padding: 0; position: relative; }
         .create-post-container {
             padding: 15px;
             border-bottom: 8px solid var(--wa-app-bg);
@@ -649,6 +650,35 @@
         #post-image-view-modal button {
             width: auto;
             margin-top: 10px;
+        }
+        
+        /* NEW: Video Thumbnail Player Style */
+        .video-thumbnail-container {
+            position: relative;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .video-thumbnail-container img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+        .play-button-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+        .play-button-overlay svg {
+            width: 60px;
+            height: 60px;
+            fill: rgba(255, 255, 255, 0.8);
         }
         
         /* NEW: Video Player Style */
@@ -1176,6 +1206,7 @@
                          <button id="search-user-btn" class="icon-btn" title="Search Users">
                             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
                         </button>
+                        <!-- NEW: Add Video Button -->
                         <button id="add-video-btn" class="icon-btn" title="Add Video">
                             <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
                         </button>
@@ -1420,7 +1451,7 @@
                         </div>
                     </div>
                     <div id="change-gender-item" class="settings-item">
-                         <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm0 1.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM12 20c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2s2-.9 2-2h2c0 2.21-1.79 4-4 4zm-4-6H6v-2h2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2h-2c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2zm8 0h2v-2h-2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2h2c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2z"/></svg></div>
+                         <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm0 1.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5 1.5zM12 20c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2s2-.9 2-2h2c0 2.21-1.79 4-4 4zm-4-6H6v-2h2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2h-2c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2zm8 0h2v-2h-2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2h2c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2z"/></svg></div>
                         <div class="details">
                             <div class="title">Change Gender</div>
                             <div class="subtitle">Can only be changed once</div>
@@ -1698,12 +1729,15 @@
             </div>
         </div>
         
+        <!-- NEW: Add Video Modal -->
         <div id="add-video-modal" class="modal">
             <div class="modal-content">
                 <h2>Post a Video</h2>
-                <p class="info-text" style="margin-bottom: 10px;">Enter a title and your Google Drive video's download ID.</p>
+                <p class="info-text" style="margin-bottom: 10px;">Enter a title, thumbnail, and your Google Drive video's download ID.</p>
                 <input type="text" id="video-title-input" placeholder="Video Title" required>
                 <input type="text" id="gdrive-id-input" placeholder="Google Drive Download ID" required>
+                <input type="file" id="video-thumbnail-input" accept="image/*" style="display:none;">
+                <label for="video-thumbnail-input" class="image-upload-label">Upload Thumbnail</label>
                 <div class="modal-actions">
                     <button id="close-add-video-modal-btn" class="secondary">Cancel</button>
                     <button id="submit-video-post-btn">Post Video</button>
@@ -1810,7 +1844,6 @@
         let appInitialized = false;
         let boostCostPerDay = 1.00; 
         let postIntersectionObserver;
-        let dmIntersectionObserver;
         let allUsersCache = []; // Cache for user search
         const notificationSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaW5nIGN1cmV6YUBnbWFpbC5jb20AAAARTGF2ZjU2LjQwLjEwMQAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9//tAwAAAAAAAAAAAAAAAAAAAAAAA/gwgYwAAA+gwgYwAADAmgwgYwAAAAAAAAAAAAAAA2cIAAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAADD/2/9');
 
@@ -1889,7 +1922,7 @@
 
         // --- UTILITY FUNCTIONS ---
         const generateJgId = () => `jg-${Math.floor(1000 + Math.random() * 9000)}`;
-        const escapeHTML = (str) => str ? str.replace(/[&<>"']/g, (match) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#39;'}[match])) : '';
+        const escapeHTML = (str) => str ? str.replace(/[&<>"']/g, (match) => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#x27;'}[match])) : '';
         
         const linkify = (inputText) => {
             const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
@@ -1941,7 +1974,10 @@
 
         const getBlueBadgeIcon = (hasBadge) => {
             if (!hasBadge) return '';
-            return `<svg class="blue-badge" viewBox="0 0 24 24" fill="#34B7F1"><path d="M22.5 12.5c0-1.28-.21-2.5-.6-3.63l-1.32.76c.28.89.42 1.83.42 2.87s-.14 1.98-.42 2.87l1.32.76c.39-1.13.6-2.35.6-3.63zm-2.48-5.32c-.52-.9-1.16-1.72-1.9-2.43l-1.13 1.13c.59.57 1.1 1.25 1.52 2.01l1.51-.71zM12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm-1.04 11.45l-2.83-2.83.71-.71 2.12 2.12 4.95-4.95.71.71-5.66 5.66zM4.98 7.18l1.51.71c.42-.76.93-1.44 1.52-2.01L6.88 4.75c-.74.71-1.38 1.53-1.9 2.43zM2.1 8.87l1.32-.76C3.02 9.22 2.9 10.16 2.9 11.1s.12 1.88.33 2.78l-1.32-.76C1.51 12.04 1.3 11.09 1.3 10.1s.21-1.94.6-2.87zm16.92 7.66l-1.51-.71c-.42.76-.93 1.44-1.52 2.01l1.13 1.13c.74-.71 1.38-1.53 1.9-2.43z"></path></svg>`;
+            // New SVG for Facebook/Meta style verified badge
+            return `<svg class="blue-badge" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="color: #1877f2;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.05 13.54l-3.18-3.18c-.31-.31-.31-.82 0-1.13s.82-.31 1.13 0l2.62 2.62 5.25-5.25c.31-.31.82-.31 1.13 0s.31.82 0 1.13l-5.81 5.81c-.16.16-.36.24-.57.24s-.41-.08-.57-.24z"></path>
+                    </svg>`;
         };
 
         async function calculateTotalLikes(userId) {
@@ -2224,7 +2260,7 @@
             setupPresenceSystem();
             handleReferralBonusOnLogin();
             listenForFriendRequests();
-            listenAndRenderPosts();
+            listenAndRenderPosts(); // UPDATE: Simplified post loading
             listenForNotifications();
             listenForDms();
             listenForAdminActions();
@@ -2240,7 +2276,6 @@
         // --- UI NAVIGATION LISTENERS ---
         document.getElementById('nav-posts').addEventListener('click', () => {
             showPanel('posts-content');
-            reloadPosts();
         });
         document.getElementById('nav-watch').addEventListener('click', () => showPanel('watch-content'));
         document.getElementById('nav-groups').addEventListener('click', () => showPanel('groups-content'));
@@ -2514,6 +2549,46 @@
         function renderBlockedUsers() { const list = document.getElementById('blocked-users-list'); list.innerHTML = ''; db.ref(`users/${currentUser.uid}/blocked`).once('value', snapshot => { if (!snapshot.exists()) { list.innerHTML = '<p style="font-size:12px; text-align:center; color: #667781;">No users blocked.</p>'; return; } snapshot.forEach(childSnapshot => { db.ref(`users/${childSnapshot.key}`).once('value', userSnap => { if (userSnap.exists()) { const user = userSnap.val(); const item = document.createElement('div'); item.className = 'list-item'; item.innerHTML = `<img src="${user.profileImageUrl}" class="list-item-profile-img" alt="U"><div class="list-item-details"><div class="list-item-name">${user.name}</div></div><div class="list-item-actions"><button onclick="unblockUser('${childSnapshot.key}')">Unblock</button></div>`; list.appendChild(item); } }); }); }); }
         
         // --- POST FEATURE FUNCTIONS ---
+        // UPDATE: Simplified post feed logic with visibility checks
+        function listenAndRenderPosts() {
+            const postsRef = db.ref('posts');
+            const feed = document.getElementById('posts-feed');
+            
+            postsRef.orderByChild('timestamp').on('child_added', (snapshot) => {
+                if(shouldShowPost(snapshot.val())) {
+                    renderSinglePost(snapshot, feed, true);
+                }
+            });
+
+            postsRef.on('child_changed', (snapshot) => {
+                const postElement = document.getElementById(`post-${snapshot.key}`);
+                if (postElement) {
+                    if (shouldShowPost(snapshot.val())) {
+                        renderSinglePost(snapshot, feed, false, postElement);
+                    } else {
+                        postElement.remove(); // Remove if it no longer meets criteria
+                    }
+                }
+            });
+
+            postsRef.on('child_removed', (snapshot) => {
+                const postElement = document.getElementById(`post-${snapshot.key}`);
+                if (postElement) postElement.remove();
+            });
+        }
+
+        // UPDATE: Function to decide if a post should be shown
+        function shouldShowPost(postData) {
+            if (!postData || postData.hasVideo) return false; // Exclude video posts
+            const isMyPost = postData.authorUid === currentUser.uid;
+            const isFriend = currentUser.contacts && currentUser.contacts[postData.authorUid];
+            const isFollowing = currentUser.following && currentUser.following[postData.authorUid];
+            const isBoosted = postData.boostInfo && postData.boostInfo.status === 'active' && postData.boostInfo.endDate > Date.now();
+            
+            return isMyPost || isFriend || isFollowing || isBoosted;
+        }
+
+
         document.getElementById('add-post-image-btn').addEventListener('click', () => { document.getElementById('post-image-input').click(); });
         document.getElementById('post-image-input').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; postImageFile = file; const reader = new FileReader(); reader.onload = (event) => { document.getElementById('post-image-preview').src = event.target.result; document.getElementById('post-image-preview-container').style.display = 'block'; }; reader.readAsDataURL(file); });
         document.getElementById('remove-post-image-btn').addEventListener('click', () => { resetPostImageSelection(); });
@@ -2545,35 +2620,6 @@
             finally { postBtn.disabled = false; postBtn.textContent = 'Post'; }
         });
         
-        function reloadPosts() {
-            const feed = document.getElementById('posts-feed');
-            feed.innerHTML = ''; 
-            listenAndRenderPosts();
-        }
-
-        function listenAndRenderPosts() {
-            const postsRef = db.ref('posts').orderByChild('timestamp');
-            const feed = document.getElementById('posts-feed');
-            
-            postsRef.on('child_added', (snapshot) => {
-                const postData = snapshot.val();
-                if (!postData || (currentUser.blocked && currentUser.blocked[postData.authorUid])) return;
-                renderSinglePost(snapshot, feed, true);
-            });
-
-            postsRef.on('child_changed', (snapshot) => {
-                const postElement = document.getElementById(`post-${snapshot.key}`);
-                if (postElement) {
-                    renderSinglePost(snapshot, feed, false, postElement);
-                }
-            });
-
-            postsRef.on('child_removed', (snapshot) => {
-                const postElement = document.getElementById(`post-${snapshot.key}`);
-                if (postElement) postElement.remove();
-            });
-        }
-
         async function renderSinglePost(snapshot, containerElement, prepend = true, replaceElement = null) {
             const postId = snapshot.key;
             const postData = snapshot.val();
@@ -2622,8 +2668,16 @@
             }
             
             if (postData.hasVideo && postData.googleDriveId) {
-                const embedUrl = `https://drive.google.com/file/d/${postData.googleDriveId}/preview`;
-                postContentHtml += `<div class="video-container"><iframe src="${embedUrl}" allow="fullscreen"></iframe></div>`;
+                const defaultThumbnail = `https://via.placeholder.com/480x360.png?text=${encodeURIComponent(postData.text || 'Video')}`;
+                const thumbnailUrl = postData.videoThumbnailUrl || defaultThumbnail;
+                
+                postContentHtml += `
+                    <div id="vid-container-${postId}" class="video-thumbnail-container" onclick="playGoogleDriveVideo('${postId}', '${postData.googleDriveId}')">
+                        <img src="${thumbnailUrl}" alt="Video thumbnail">
+                        <div class="play-button-overlay">
+                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>`;
             }
 
             postContentHtml += boostButtonHtml; 
@@ -2669,6 +2723,14 @@
             });
         }
         
+        window.playGoogleDriveVideo = (postId, driveId) => {
+            const container = document.getElementById(`vid-container-${postId}`);
+            if(container) {
+                const embedUrl = `https://drive.google.com/file/d/${driveId}/preview`;
+                container.outerHTML = `<div class="video-container"><iframe src="${embedUrl}" allow="fullscreen" allowfullscreen></iframe></div>`;
+            }
+        };
+
         async function initiateDmFromPost(authorUid) {
             const userSnap = await db.ref(`users/${authorUid}`).once('value');
             if(userSnap.exists()){
@@ -2750,15 +2812,12 @@
                     posts.push({ id: child.key, ...child.val() });
                 }); 
                 posts.reverse().forEach(post => { 
+                    if(post.hasVideo) return; // Do not show video posts here
                     const postDiv = document.createElement('div');
                     postDiv.className = 'post-card';
                     const time = new Date(post.timestamp).toLocaleString(); 
                     let content = post.text ? `<div class="post-content">${linkify(post.text)}</div>` : ''; 
-                    if (post.imageUrl) content += `<img src="${post.imageUrl}" class="post-image" onclick="viewPostImage('${post.imageUrl}')">`; 
-                    if (post.hasVideo && post.googleDriveId) {
-                        const embedUrl = `https://drive.google.com/file/d/${post.googleDriveId}/preview`;
-                        content += `<div class="video-container"><iframe src="${embedUrl}" allow="fullscreen"></iframe></div>`;
-                    }
+                    if (post.imageUrl) content += `<img src="${post.imageUrl}" class="post-image" onclick="viewPostImage('${post.imageUrl}')">`;
                     postDiv.innerHTML = `<div class="post-header"><img src="${post.authorProfileImageUrl}" class="list-item-profile-img" style="width:40px;height:40px;"><div class="post-author-info"><div class="name">${escapeHTML(post.authorName)}</div><div class="timestamp">${time}</div></div><div class="post-controls"><span class="edit-post-btn post-control-btn" onclick="openEditModal('${post.id}')">Edit</span><span class="delete-post-btn post-control-btn" onclick="deletePost('${post.id}')">Delete</span></div></div>${content}`; 
                     list.appendChild(postDiv); 
                 }); 
@@ -3417,6 +3476,7 @@
         }
 
         // --- DIRECT MESSAGING (DM) ---
+        // UPDATE: Real-time unread conversation counting
         function listenForDms() {
             const conversationsRef = db.ref(`users/${currentUser.uid}/conversations`);
             conversationsRef.on('value', (snapshot) => {
@@ -3542,25 +3602,16 @@
             
             messagesRef.limitToLast(50).on('child_added', (snapshot) => {
                 renderDmMessage(snapshot, convId);
+                // Mark as seen immediately if the message is not from the current user
+                if(snapshot.val().sender !== myUid) {
+                    db.ref(`direct_messages/${convId}/${snapshot.key}/seenBy/${myUid}`).set(firebase.database.ServerValue.TIMESTAMP);
+                }
             });
             messagesRef.on('child_changed', (snapshot) => {
                 renderDmMessage(snapshot, convId, true);
             });
-            
-            // Mark all previous unread messages as seen upon opening chat
-            const unreadMessagesQuery = messagesRef.orderByChild('sender').equalTo(otherUserId);
-            unreadMessagesQuery.once('value', snapshot => {
-                const updates = {};
-                snapshot.forEach(child => {
-                    if (!child.val().seenBy || !child.val().seenBy[myUid]) {
-                        updates[`/direct_messages/${convId}/${child.key}/seenBy/${myUid}`] = firebase.database.ServerValue.TIMESTAMP;
-                    }
-                });
-                if(Object.keys(updates).length > 0) {
-                    db.ref().update(updates);
-                }
-            });
         }
+
         
         function renderDmMessage(snapshot, convId, isUpdate = false) {
             const messagesContainer = document.getElementById('dm-chat-messages');
@@ -3721,8 +3772,12 @@
         function renderWatchContent() {
             const container = document.getElementById('watch-content');
             container.innerHTML = '<p style="text-align:center; padding: 20px;">Loading videos...</p>';
+
+            const videoPostsRef = db.ref('posts').orderByChild('hasVideo').equalTo(true);
             
-            db.ref('posts').orderByChild('hasVideo').equalTo(true).limitToLast(50).once('value', snapshot => {
+            videoPostsRef.off(); // আগের লিসেনার থাকলে রিমুভ করুন
+
+            videoPostsRef.on('value', async (snapshot) => {
                 container.innerHTML = '';
                 if (!snapshot.exists()) {
                     container.innerHTML = '<p style="text-align:center; color: var(--wa-text-secondary); padding: 50px 20px;">No video posts found.</p>';
@@ -3730,12 +3785,27 @@
                 }
                 
                 let videoPosts = [];
-                snapshot.forEach(child => videoPosts.push(child));
-                videoPosts.reverse(); 
-                
-                videoPosts.forEach(postSnapshot => {
-                    renderSinglePost(postSnapshot, container, false);
+                snapshot.forEach(child => {
+                    const postData = child.val();
+                    // =================== মূল সমাধান এখানে ===================
+                    // শুধুমাত্র hasVideo এবং googleDriveId দুটোই থাকলে ভিডিও হিসেবে গণ্য হবে
+                    if (postData.hasVideo && postData.googleDriveId) {
+                        videoPosts.push({ key: child.key, ...postData });
+                    }
+                    // =========================================================
                 });
+
+                if (videoPosts.length === 0) {
+                     container.innerHTML = '<p style="text-align:center; color: var(--wa-text-secondary); padding: 50px 20px;">No valid video posts found.</p>';
+                     return;
+                }
+
+                videoPosts.reverse(); // নতুন ভিডিও প্রথমে দেখানোর জন্য
+                
+                for (const post of videoPosts) {
+                    const postSnapshot = await db.ref(`posts/${post.key}`).once('value');
+                    renderSinglePost(postSnapshot, container, false);
+                }
             });
         }
         
@@ -3745,34 +3815,54 @@
             document.getElementById('submit-video-post-btn').addEventListener('click', async () => {
                 const title = document.getElementById('video-title-input').value.trim();
                 const gdriveId = document.getElementById('gdrive-id-input').value.trim();
+                const thumbnailFile = document.getElementById('video-thumbnail-input').files[0];
 
                 if(!title || !gdriveId) {
                     alert('Please provide both a title and a Google Drive ID.');
                     return;
                 }
+                if(!thumbnailFile) {
+                    alert('Please upload a thumbnail image for the video.');
+                    return;
+                }
 
-                const postData = {
-                    authorUid: currentUser.uid,
-                    authorName: currentUser.name,
-                    authorProfileImageUrl: currentUser.profileImageUrl,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP,
-                    text: title,
-                    hasVideo: true,
-                    googleDriveId: gdriveId
-                };
+                const postBtn = document.getElementById('submit-video-post-btn');
+                postBtn.disabled = true;
+                postBtn.innerHTML = '<div class="loader-small"></div>';
 
                 try {
+                    const thumbnailUrl = await uploadImage(thumbnailFile);
+                    if (!thumbnailUrl) {
+                        throw new Error("Thumbnail upload failed.");
+                    }
+
+                    const postData = {
+                        authorUid: currentUser.uid,
+                        authorName: currentUser.name,
+                        authorProfileImageUrl: currentUser.profileImageUrl,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        text: title,
+                        hasVideo: true,
+                        googleDriveId: gdriveId,
+                        videoThumbnailUrl: thumbnailUrl
+                    };
+
                     await db.ref('posts').push(postData);
                     alert('Video posted successfully!');
                     showModal('add-video-modal', false);
                     document.getElementById('video-title-input').value = '';
                     document.getElementById('gdrive-id-input').value = '';
+                    document.getElementById('video-thumbnail-input').value = '';
+                    // The 'on' listener in renderWatchContent will now automatically handle the update.
+
                 } catch(err) {
                     alert('Failed to post video. ' + err.message);
+                } finally {
+                    postBtn.disabled = false;
+                    postBtn.textContent = "Post Video";
                 }
             });
         }
-
 
     </script>
 </body>
